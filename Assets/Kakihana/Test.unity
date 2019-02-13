@@ -490,8 +490,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetMaxnum: 30
   count: 0
-  planetsPre:
+  planetObjNum: 0
+  planetPre:
   - {fileID: 548898704428150006, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
   - {fileID: 236328613798431705, guid: 45720375054f68145ab211919c4efa2e, type: 3}
   - {fileID: 6904351362961636028, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
   - {fileID: 6498702060816887612, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
+  hierarchyTrans: {fileID: 0}
