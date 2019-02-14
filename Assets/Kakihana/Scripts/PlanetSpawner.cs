@@ -19,7 +19,7 @@ public class PlanetSpawner : MonoBehaviour
     [SerializeField] private Transform bossObjTrans;            // ボスオブジェクトのトランスフォーム
     [SerializeField] private GameObject[] planetPre;            // スポーンする惑星をここに格納
     [SerializeField] private List<GameObject> pooledObjList;    // キャッシュ後の惑星をここに格納
-    [SerializeField] private Transform hierarchyTrans;
+    [SerializeField] private Transform[] planetPreTrans;        // スポーンする惑星のトランスフォーム
 
 
     int interval = 1;
@@ -83,10 +83,30 @@ public class PlanetSpawner : MonoBehaviour
         float y = 0.0f;
         float z = Random.Range(-bossRadius, bossRadius);
         Vector3 spawnPos = new Vector3(x, y, z);
+        RaycastHit hit;
+        var radius = planetPreTrans[planetObjNum].localScale.x * 0.5f;
+        if(Physics.SphereCast(spawnPos,radius,Vector3.forward,out hit))
+        {
+            Debug.DrawRay(spawnPos, hit.point, Color.red);
+            Debug.Log("設置不可");
+        }
+        else
+        {
+            Debug.DrawRay(spawnPos, hit.point, Color.red);
+            Debug.Log("設置");
+            Instantiate(planetPre[planetObjNum], spawnPos, Quaternion.identity);
+        }
         // 惑星生成
-        Instantiate(planetPre[planetObjNum], spawnPos, Quaternion.identity);
+        //Instantiate(planetPre[planetObjNum], spawnPos, Quaternion.identity);
         count++;
     }
+
+    public void PlanetDestroy()
+    {
+        count--;
+    }
+
+    // デバッグ用ボス周辺エリアを可視化する
     private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);

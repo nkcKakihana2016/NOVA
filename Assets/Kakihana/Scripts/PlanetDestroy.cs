@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlanetDestroy : MonoBehaviour
 {
-
+    [SerializeField] PlanetSpawner spawner;
     float time;
 
     // Start is called before the first frame update
@@ -19,6 +19,7 @@ public class PlanetDestroy : MonoBehaviour
         time += Time.deltaTime;
         if (time > 30.0f)
         {
+            FindObjectOfType<PlanetSpawner>().PlanetDestroy();
             Destroy(this.gameObject);
         }
     }
