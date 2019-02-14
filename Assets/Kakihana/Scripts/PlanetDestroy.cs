@@ -17,7 +17,7 @@ public class PlanetDestroy : MonoBehaviour
     void Update()
     {
         time += Time.deltaTime;
-        if (time > 10.0f)
+        if (time > 30.0f)
         {
             Destroy(this.gameObject);
         }

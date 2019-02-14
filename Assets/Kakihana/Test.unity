@@ -489,11 +489,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planetMaxnum: 30
+  hotSpotMax: 20
   count: 0
   planetObjNum: 0
+  bossRadius: 0
+  bossObjTrans: {fileID: 1989148986}
   planetPre:
   - {fileID: 548898704428150006, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
   - {fileID: 236328613798431705, guid: 45720375054f68145ab211919c4efa2e, type: 3}
   - {fileID: 6904351362961636028, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
   - {fileID: 6498702060816887612, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
+  pooledObjList: []
   hierarchyTrans: {fileID: 0}
