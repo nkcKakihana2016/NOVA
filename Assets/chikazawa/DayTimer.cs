@@ -2,31 +2,33 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UniRx;
 
-public class timer : MonoBehaviour
+public class DayTimer : MonoBehaviour
 {
     Text timerText;
     float timeCount;
     //　最初の時間
     float startTime;
+    int week;
+    int month;
+    int year;
     bool stopFLG;
+
     void Start()
     {
         timerText = GetComponentInChildren<Text>();
         timeCount = 0;
+        year = 2019;
     }
 
     void Update()
     {
-
-        //　Time.timeでの時間計測
         timeCount += Time.deltaTime;//毎フレームの時間を加算.
-        int minute = (int)timeCount / 60;//分.timeを60で割った値.
-        int second = (int)timeCount % 60;//秒.timeを60で割った余り.
-        int msecond = (int)(timeCount * 100 % 99);
+        DayCount(timeCount);
 
-        timerText.text = minute.ToString("00") + second.ToString("00") + msecond.ToString("00");
+        timerText.text = year.ToString("0000") +"年 / "+ month.ToString("00") +"月 / 第" + week.ToString("0") + "週";
+
+
         //　マウスの左ボタン押しで一時停止
         if (Input.GetMouseButtonDown(0))
         {
@@ -34,10 +36,28 @@ public class timer : MonoBehaviour
             Time.timeScale = Mathf.Approximately(Time.timeScale, 0f) ? 1f : 0f;
             Debug.Log("set");
         }
-        
+
     }
-     void FixedUpdate()
+    void DayCount(float time)
     {
-        
+        bool countUp = false;
+        week = (int)( 1 + (time % 4));
+        if (week == 1 && countUp)
+        {
+            countUp = !countUp;
+
+        }
+        if (countUp)
+        {
+            month++;
+            if (month > 12)
+            {
+                month = 1;
+                year++;
+            }
+        }
+
     }
 }
+//timerText.text = minute.ToString("00") + second.ToString("00") + msecond.ToString("00");
+

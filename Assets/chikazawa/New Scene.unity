@@ -555,7 +555,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1427409913}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b64fa107d7763d740b4aeb56f3740523, type: 3}
+  m_Script: {fileID: 11500000, guid: 876e809a779704f4a8118845b673e0f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1427409916
@@ -680,8 +680,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11500000, guid: b64fa107d7763d740b4aeb56f3740523, type: 3}
-        m_MethodName: 
-        m_Mode: 1
+        m_MethodName: set_name
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
