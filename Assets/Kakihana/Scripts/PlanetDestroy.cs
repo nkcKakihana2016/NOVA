@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlanetDestroy : MonoBehaviour
 {
+    // 惑星が持つスクリプト 30秒経つと消える
     [SerializeField] PlanetSpawner spawner;
     float time;
 
@@ -19,6 +20,7 @@ public class PlanetDestroy : MonoBehaviour
         time += Time.deltaTime;
         if (time > 30.0f)
         {
+            // 30秒経つとにスポーンクラスに消滅情報を送る
             FindObjectOfType<PlanetSpawner>().PlanetDestroy();
             Destroy(this.gameObject);
         }
