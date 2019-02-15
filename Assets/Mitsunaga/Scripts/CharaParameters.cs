@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UniRx;
+using UniRx.Triggers;
 
+[RequireComponent(typeof(Rigidbody))]
 public class CharaParameters : MonoBehaviour
 {
-    [SerializeField,Header("星のサイズ")]
+    [SerializeField, Header("星のID (使用用途については要相談)")]
+    public int starID = 0;  // 自機やボスなどを特定できるようにするために使うかな？
+
+    [SerializeField, Header("星のサイズ")]
     FloatReactiveProperty starSize = new FloatReactiveProperty(1.0f);
 
-    [SerializeField,Header("星のID (使用用途については要相談)")]
-    public int starID = 0;  // 自機やボスなどを特定できるようにするために使うかな？
     [SerializeField,Header("マテリアル初期化用パラメータ")]
     MatTable matTable;
 
@@ -28,8 +31,9 @@ public class CharaParameters : MonoBehaviour
             transform.localScale = new Vector3(starSize.Value, starSize.Value, starSize.Value);
         }).AddTo(gameObject);
 
-        // マテリアルの初期設定
+        // 初期設定
         InitMaterial();
+        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     // 星のサイズ設定
