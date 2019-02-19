@@ -10,7 +10,7 @@ public class PlayerController : CharaParameters
     // プレイヤーとカメラのコントロールを行う
 
     // プレイヤーのパラメータ関連
-    Rigidbody playerRig;        // プレイヤーのRigidbody
+    Rigidbody playerRig;                // プレイヤーのRigidbody
 
     // 星の移動関連
     [SerializeField, Header("星の加速度、加速度への追従度、反応距離")]
@@ -23,13 +23,20 @@ public class PlayerController : CharaParameters
     Transform cursorParent;
     [SerializeField]
     GameObject[] holes;
-    bool holeFlg;    // trueならブラックホール(0)、falseならホワイトホール(1)
+    bool holeFlg;               // trueならブラックホール(0)、falseならホワイトホール(1)
+
+    [SerializeField, Header("星合体時の待ち時間")]
+    float waitCount = 2;
 
     [SerializeField, Header("カメラのオブジェクト")]
-    Transform cameraPos;        // 移動に追従するカメラ  
-    
-    float cameraDist = 50.0f;   // マウスカーソルを置きたい奥行とカメラとの距離
-    Vector3 mousePos;           // 取得したマウスカーソルの座標
+    Transform cameraPos;        // 移動に追従するカメラ
+
+    // 定数　このへんもっと分かりやすい変数名教えてくれ…
+    const float MOVEDISTANCE = 10.0f;   // マウスの反応する距離　これ+星の直径
+    const float CDISTANCE = 50.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
+    const float CMARGIN = 300.0f;       // 画面端からのカメラ追従の余白
+    const float SCREENX = 1920.0f;      // 画面の横幅
+    const float SCREENY = 1080.0f;      // 画面の縦幅
 
     new void Awake()
     {
@@ -41,6 +48,7 @@ public class PlayerController : CharaParameters
         holes[1].SetActive(false);
         holes[0].SetActive(true);
     }
+
     void Start()
     {
         // 毎フレーム呼び出される
@@ -50,6 +58,8 @@ public class PlayerController : CharaParameters
             // マウスのクリック処理
                 if (Input.GetMouseButtonDown(0))
                 {
+                    GameManager.Instance.NextState(GameManager.GameState.Start);
+
                     moveSpeed = -moveSpeed;
 
                     if (holeFlg)
@@ -68,35 +78,63 @@ public class PlayerController : CharaParameters
                     }
                 }
 
-            // マウスのカーソル・移動処理
-                Vector3 mouseScreen = Input.mousePosition;                      // マウスカーソルの座標を取得
-                mouseScreen.z = cameraDist;                                     // 奥行を指定
-                mousePos = Camera.main.ScreenToWorldPoint(mouseScreen);         // スクリーン座標系からワールド座標系に変換
-                cursorParent.transform.position = mousePos;                     // マウスカーソルの座標にオブジェクトを同期
-                Vector3 movePos = (mousePos - transform.position).normalized;   // マウスカーソルへの方向を取得
-                // 反応距離より近ければ、AddForceを適用
-                if (Vector3.Distance(mousePos, transform.position) <= transform.localScale.x)
-                {
-                    playerRig.AddForce(moveSpeedMul * ((movePos * moveSpeed) - playerRig.velocity));
-                }
+                // マウスカーソル・移動処理
+                MoveCursor();
 
-                // カメラの処理(仮)
-                cameraPos.position = new Vector3(transform.position.x, cameraPos.position.y, transform.position.z);
-            }
-            );
+                // カメラ処理
+                MoveCamera();
+            });
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
             .Where(x => x.gameObject.GetComponent<CharaParameters>().starID != 1)
             .Subscribe(x =>
             {
-                // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
-                Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, 3))
-            .       Subscribe(t => Debug.Log(t));
+                // 当たった星のサイズが自分と同じか小さければ破壊して合体
+                if(x.transform.localScale.x <= transform.localScale.x)
+                {
+                    // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
+                    Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount))
+                    .Subscribe(t => Debug.Log(t));
 
-                SetStarSize(x.gameObject.transform.localScale.x / 2);
-                Destroy(x.gameObject);
+                    SetStarSize(x.gameObject.transform.localScale.x / 2);
+                    Destroy(x.gameObject);
+                }
+                else
+                {
+                    GameManager.Instance.isGameOver.Value = true;
+                    Destroy(this.gameObject);
+                }
             });
+    }
+
+    // マウスカーソル・移動処理
+    void MoveCursor()
+    {
+        Vector3 mouseScreen = Input.mousePosition;                      // マウスカーソルの座標を取得
+        mouseScreen.z = CDISTANCE;                                      // 奥行を指定
+        Vector3 mousePos = Camera.main.ScreenToWorldPoint(mouseScreen); // スクリーン座標系からワールド座標系に変換
+        cursorParent.transform.position = mousePos;                     // マウスカーソルの座標にオブジェクトを同期
+
+        // 反応距離より近ければ、AddForceを適用
+        if (Vector3.Distance(mousePos, transform.position) <= MOVEDISTANCE + transform.localScale.x)
+        {
+            Vector3 moveDir = (mousePos - transform.position).normalized;   // マウスカーソルへの方向を取得
+            playerRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - playerRig.velocity));
+        }
+    }
+
+    // カメラ処理(仮)
+    void MoveCamera()
+    {
+        // 一旦線形補間使ってごまかし(うまくいってない！！！)
+        float lerp = 0.1f;
+        Vector3 movePos = new Vector3(0.0f, CDISTANCE, 0.0f);
+
+        movePos.x = Mathf.Lerp(transform.position.x, cameraPos.position.x, lerp);
+        movePos.z = Mathf.Lerp(transform.position.z, cameraPos.position.z, lerp);
+
+        cameraPos.position = movePos;
     }
 
     // 衝突後の待ち時間を管理するコルーチン
@@ -108,12 +146,12 @@ public class PlayerController : CharaParameters
         while (count < waitCount)
         {
             playerRig.isKinematic = true;
-            observer.OnNext(count += Time.deltaTime);
+            observer.OnNext(count += Time.deltaTime);   // デバッグ用
 
             yield return null;
         }
 
         playerRig.isKinematic = false;
-        observer.OnNext(waitCount);
+        observer.OnNext(waitCount);                     // デバッグ用
     }
 }

@@ -29,7 +29,8 @@ public class CharaParameters : MonoBehaviour
         starSize.Subscribe(c =>
         {
             transform.localScale = new Vector3(starSize.Value, starSize.Value, starSize.Value);
-        }).AddTo(gameObject);
+        })
+        .AddTo(gameObject);
 
         // 初期設定
         InitMaterial();
