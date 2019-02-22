@@ -5,7 +5,7 @@ using UniRx;
 using UniRx.Triggers;
 using UniRx.Toolkit;
 
-public class PlayerController : CharaParameters
+public class PlayerController : _StarParam
 {
     // プレイヤーとカメラのコントロールを行う
 
@@ -25,7 +25,9 @@ public class PlayerController : CharaParameters
     GameObject[] holes;
     bool holeFlg;               // trueならブラックホール(0)、falseならホワイトホール(1)
 
-    [SerializeField, Header("星合体時の待ち時間")]
+    [SerializeField, Header("星の衝突時、合体時の待ち時間")]
+    float hitStopCount = 0.03f;
+    [SerializeField]
     float waitCount = 2;
 
     [SerializeField, Header("カメラのオブジェクト")]
@@ -34,14 +36,13 @@ public class PlayerController : CharaParameters
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
     const float MOVEDISTANCE = 10.0f;   // マウスの反応する距離　これ+星の直径
     const float CDISTANCE = 50.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
-    const float CMARGIN = 300.0f;       // 画面端からのカメラ追従の余白
-    const float SCREENX = 1920.0f;      // 画面の横幅
-    const float SCREENY = 1080.0f;      // 画面の縦幅
 
     new void Awake()
     {
         base.Awake();
 
+        // プレイヤー情報
+        GameManager.Instance.playerTransform = this.gameObject.transform;
         playerRig = GetComponent<Rigidbody>();
 
         holeFlg = true;
@@ -82,16 +83,17 @@ public class PlayerController : CharaParameters
                 MoveCursor();
 
                 // カメラ処理
-                MoveCamera();
+                // カメラ処理はCinemachineに一任することになりました！解散！
+                //MoveCamera();
             });
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
-            .Where(x => x.gameObject.GetComponent<CharaParameters>().starID != 1)
+            .Where(x => x.gameObject.GetComponent<_StarParam>().starID != 1)
             .Subscribe(x =>
             {
                 // 当たった星のサイズが自分と同じか小さければ破壊して合体
-                if(x.transform.localScale.x <= transform.localScale.x)
+                if (x.transform.localScale.x <= transform.localScale.x)
                 {
                     // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
                     Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount))
@@ -143,9 +145,11 @@ public class PlayerController : CharaParameters
     {
         float count = 0.0f;
 
+        StartCoroutine(HitStopCoroutine(hitStopCount));
+        playerRig.isKinematic = true;
+
         while (count < waitCount)
         {
-            playerRig.isKinematic = true;
             observer.OnNext(count += Time.deltaTime);   // デバッグ用
 
             yield return null;
@@ -153,5 +157,22 @@ public class PlayerController : CharaParameters
 
         playerRig.isKinematic = false;
         observer.OnNext(waitCount);                     // デバッグ用
+    }
+
+    // 衝突時のヒットストップを管理するコルーチン
+    // コライダーの判定を取ったときに、一瞬スローになる演出
+    IEnumerator HitStopCoroutine(float stopCount)
+    {
+        float count = 0.0f;
+
+        Time.timeScale = 0.05f;
+        while (count < stopCount)
+        {
+            count += Time.deltaTime;
+
+            yield return null;
+        }
+
+        Time.timeScale = 1.0f;
     }
 }

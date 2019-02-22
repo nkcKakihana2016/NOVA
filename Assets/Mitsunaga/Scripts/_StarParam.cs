@@ -6,7 +6,7 @@ using UniRx;
 using UniRx.Triggers;
 
 [RequireComponent(typeof(Rigidbody))]
-public class CharaParameters : MonoBehaviour
+public class _StarParam : MonoBehaviour
 {
     [SerializeField, Header("星のID (使用用途については要相談)")]
     public int starID = 0;  // 自機やボスなどを特定できるようにするために使うかな？

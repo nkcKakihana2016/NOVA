@@ -21,6 +21,9 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     GameState gameState;        // 現在のステート
     GameState nextGameState;    // デバッグ用　次のステート
 
+    // プレイヤーの情報
+    public Transform playerTransform;
+
     // フラグ管理
     public BoolReactiveProperty isClear = new BoolReactiveProperty(false);       // クリア
     public BoolReactiveProperty isGameOver = new BoolReactiveProperty(false);    // ゲームオーバー
@@ -62,9 +65,11 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
             .AddTo(gameObject);
     }
 
-    // デバッグ用のキー入力処理
+    // デバッグ用
     void Update()
     {
+        Debug.Log(playerTransform.position.x.ToString());
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             NextState(nextGameState);
