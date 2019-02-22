@@ -104,3 +104,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d831e628300f9d4282e0fca61ac11aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawner: {fileID: 0}
+  myTrans: {fileID: 6733124272144027428}
