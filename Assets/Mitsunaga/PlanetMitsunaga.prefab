@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 4022168476953576733}
   - component: {fileID: 1477325928573539503}
   - component: {fileID: 5573208887694944742}
-  - component: {fileID: 7417187149768559094}
-  - component: {fileID: 7435772409506070763}
+  - component: {fileID: 2619897620296633071}
+  - component: {fileID: 6620282836372197336}
   m_Layer: 0
-  m_Name: Planet1
+  m_Name: PlanetMitsunaga
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawner: {fileID: 0}
   myTrans: {fileID: 4843305212181727661}
---- !u!54 &7417187149768559094
+--- !u!54 &2619897620296633071
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,7 +124,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7435772409506070763
+--- !u!114 &6620282836372197336
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

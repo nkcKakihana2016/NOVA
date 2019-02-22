@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0331544b44dfd0048869a768754e8f90, type: 3}
   m_Name: MatTable_BOSS01
   m_EditorClassIdentifier: 
-  color1: {r: 1, g: 0.6745283, b: 0.6745283, a: 1}
-  tex1: {fileID: 2800000, guid: 1a4869cc28f1c22448edd28726f007c5, type: 3}
-  color2: {r: 1, g: 0.9748333, b: 0.6179246, a: 1}
-  tex2: {fileID: 2800000, guid: 1a4869cc28f1c22448edd28726f007c5, type: 3}
+  color1: {r: 1, g: 0.25943398, b: 0.25943398, a: 1}
+  tex1: {fileID: 2800000, guid: 059100afce024644191145ade30833b4, type: 3}
+  color2: {r: 1, g: 0.8604273, b: 0.3820755, a: 1}
+  tex2: {fileID: 2800000, guid: 059100afce024644191145ade30833b4, type: 3}
   mask: {fileID: 2800000, guid: 059100afce024644191145ade30833b4, type: 3}
   Threshold: 0.5
   Smoothness: 0.5

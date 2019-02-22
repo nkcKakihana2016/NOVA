@@ -50,7 +50,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         minR = Mathf.Pow(hotSpotRadiusMin, 2);
 
         // 2秒ごとに実行
-        Observable.IntervalFrame(120)
+        Observable.IntervalFrame(10)
             .Do(_ => Debug.Log("PlanetCreate")).Subscribe(_ =>
             {
                 if(count < planetMaxnum)

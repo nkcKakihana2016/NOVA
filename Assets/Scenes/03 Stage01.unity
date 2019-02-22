@@ -226,7 +226,7 @@ Light:
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
-  m_Range: 10
+  m_Range: 300
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -259,13 +259,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 166186398}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 0, y: 3, z: 0}
+  m_LocalRotation: {x: 0.4924039, y: -0.4924039, z: 0.41317588, w: 0.5868242}
+  m_LocalPosition: {x: 0, y: 3, z: 50}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 80, y: -80, z: 0}
 --- !u!1 &391554231 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2435622099095461852, guid: d7f32cc1d5c77ff4da0a3d891025f599,
@@ -316,7 +316,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: 96b6a0c9446801d499c9e1c5f614c9cf, type: 2}
-  moveSpeed: 20
+  moveSpeed: 30
   moveSpeedMul: 2
   cursorParent: {fileID: 821991436}
   holes:
@@ -426,7 +426,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ImpulseDefinition:
     m_ImpulseChannel: 1
-    m_RawSignal: {fileID: 0}
+    m_RawSignal: {fileID: 11400000, guid: 69ce8388f6785dd4c8c39915efece2f4, type: 2}
     m_AmplitudeGain: 0.5
     m_FrequencyGain: 5
     m_RepeatMode: 0
@@ -633,14 +633,11 @@ MonoBehaviour:
   hotSpotMax: 20
   hotSpotRadiusMax: 150
   hotSpotRadiusMin: 50
+  planetSpawnHeight: 0
   bossObjTrans: {fileID: 1768393975}
   planetPrefab:
-  - {fileID: 5573208887694944742, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
-  - {fileID: 4438388620521869707, guid: 45720375054f68145ab211919c4efa2e, type: 3}
-  - {fileID: 5500910443563487641, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
-  - {fileID: 1159296964466536967, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
-  - {fileID: 6697012517613882918, guid: e31695bcb8442864ba870ec7522a1e13, type: 3}
-  - {fileID: 1417264961289830716, guid: 4dda15ca6c400bc4891b2ebe3dd88a9a, type: 3}
+  - {fileID: 5573208887694944742, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
+  hierarchyTrans: {fileID: 0}
   count: 0
   planetObjNum: 0
   planetObjRadius: []
@@ -690,7 +687,7 @@ PrefabInstance:
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -50
       objectReference: {fileID: 0}
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
@@ -730,6 +727,22 @@ PrefabInstance:
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 971745615, guid: d7f32cc1d5c77ff4da0a3d891025f599, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 971745615, guid: d7f32cc1d5c77ff4da0a3d891025f599, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 971745615, guid: d7f32cc1d5c77ff4da0a3d891025f599, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 971745615, guid: d7f32cc1d5c77ff4da0a3d891025f599, type: 3}
+      propertyPath: prewarm
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
