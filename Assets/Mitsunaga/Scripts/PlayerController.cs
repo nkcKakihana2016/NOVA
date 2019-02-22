@@ -30,9 +30,6 @@ public class PlayerController : _StarParam
     [SerializeField]
     float waitCount = 2;
 
-    [SerializeField, Header("カメラのオブジェクト")]
-    Transform cameraPos;        // 移動に追従するカメラ
-
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
     const float MOVEDISTANCE = 10.0f;   // マウスの反応する距離　これ+星の直径
     const float CDISTANCE = 50.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
@@ -42,7 +39,7 @@ public class PlayerController : _StarParam
         base.Awake();
 
         // プレイヤー情報
-        GameManager.Instance.playerTransform = this.gameObject.transform;
+        // GameManager.Instance.playerTransform = this.gameObject.transform;
         playerRig = GetComponent<Rigidbody>();
 
         holeFlg = true;
@@ -59,8 +56,6 @@ public class PlayerController : _StarParam
             // マウスのクリック処理
                 if (Input.GetMouseButtonDown(0))
                 {
-                    GameManager.Instance.NextState(GameManager.GameState.Start);
-
                     moveSpeed = -moveSpeed;
 
                     if (holeFlg)
@@ -81,10 +76,6 @@ public class PlayerController : _StarParam
 
                 // マウスカーソル・移動処理
                 MoveCursor();
-
-                // カメラ処理
-                // カメラ処理はCinemachineに一任することになりました！解散！
-                //MoveCamera();
             });
 
         // 当たり判定
@@ -104,7 +95,7 @@ public class PlayerController : _StarParam
                 }
                 else
                 {
-                    GameManager.Instance.isGameOver.Value = true;
+                    //GameManager.Instance.isGameOver.Value = true;
                     Destroy(this.gameObject);
                 }
             });
@@ -124,19 +115,6 @@ public class PlayerController : _StarParam
             Vector3 moveDir = (mousePos - transform.position).normalized;   // マウスカーソルへの方向を取得
             playerRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - playerRig.velocity));
         }
-    }
-
-    // カメラ処理(仮)
-    void MoveCamera()
-    {
-        // 一旦線形補間使ってごまかし(うまくいってない！！！)
-        float lerp = 0.1f;
-        Vector3 movePos = new Vector3(0.0f, CDISTANCE, 0.0f);
-
-        movePos.x = Mathf.Lerp(transform.position.x, cameraPos.position.x, lerp);
-        movePos.z = Mathf.Lerp(transform.position.z, cameraPos.position.z, lerp);
-
-        cameraPos.position = movePos;
     }
 
     // 衝突後の待ち時間を管理するコルーチン

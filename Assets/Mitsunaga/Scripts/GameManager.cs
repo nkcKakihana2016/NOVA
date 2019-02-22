@@ -15,8 +15,8 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     {
         Start,          // スタート画面
         StageSelect,    // ステージセレクト画面
-        Main,           // メインゲーム画面
-        Result          // リザルト画面
+        Stage01,           // メインゲーム画面
+        Stage02          // リザルト画面
     }
     GameState gameState;        // 現在のステート
     GameState nextGameState;    // デバッグ用　次のステート
@@ -68,12 +68,6 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     // デバッグ用
     void Update()
     {
-        Debug.Log(playerTransform.position.x.ToString());
-
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            NextState(nextGameState);
-        }
     }
 
     // ステートの変更
@@ -90,23 +84,19 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
         {
             case GameState.Start:
                 Debug.Log("ChangeState Start");
-                nextGameState = GameState.StageSelect;
-                //SceneManager.LoadScene(0);
+                SceneManager.LoadScene(1);
                 break;
             case GameState.StageSelect:
                 Debug.Log("ChangeState StageSelect");
-                nextGameState = GameState.Main;
-                //SceneManager.LoadScene(1);
+                SceneManager.LoadScene(2);
                 break;
-            case GameState.Main:
+            case GameState.Stage01:
                 Debug.Log("ChangeState Main");
-                nextGameState = GameState.Result;
-                //SceneManager.LoadScene(2);
+                SceneManager.LoadScene(3);
                 break;
-            case GameState.Result:
+            case GameState.Stage02:
                 Debug.Log("ChangeState Result");
-                nextGameState = GameState.Start;
-                //SceneManager.LoadScene(3);
+                SceneManager.LoadScene(4);
                 break;
         }
     }
