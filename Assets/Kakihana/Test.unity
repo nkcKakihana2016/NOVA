@@ -272,6 +272,36 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &541097627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 541097628}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &541097628
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541097627}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1047269429
 GameObject:
   m_ObjectHideFlags: 0
@@ -583,27 +613,22 @@ MonoBehaviour:
   hotSpotMax: 20
   hotSpotRadiusMax: 15
   hotSpotRadiusMin: 5
+  planetSpawnHeight: 0
   bossObjTrans: {fileID: 1989148986}
   planetPrefab:
   - {fileID: 5573208887694944742, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
   - {fileID: 4438388620521869707, guid: 45720375054f68145ab211919c4efa2e, type: 3}
   - {fileID: 5500910443563487641, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
   - {fileID: 1159296964466536967, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
-  planetPre:
-  - {fileID: 548898704428150006, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
-  - {fileID: 236328613798431705, guid: 45720375054f68145ab211919c4efa2e, type: 3}
-  - {fileID: 6904351362961636028, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
-  - {fileID: 6498702060816887612, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
-  planetPreTrans:
-  - {fileID: 4843305212181727661, guid: 0ca1975a3438de6418e446ebbb27e9f9, type: 3}
-  - {fileID: 2534442085042691671, guid: 45720375054f68145ab211919c4efa2e, type: 3}
-  - {fileID: 6194545714722051897, guid: 2096a81aa45bc344cb149192eb051fd7, type: 3}
-  - {fileID: 6733124272144027428, guid: 9739b13bcfccda44ea18fd08d181ceaa, type: 3}
+  planetPool: []
+  hierarchyTrans: {fileID: 541097628}
   count: 0
   planetObjNum: 0
+  planetObjRadius: []
   bossRadius: 0
   xAbs: 0
   zAbs: 0
   maxR: 0
   minR: 0
   spawnPos: {x: 0, y: 0, z: 0}
+  debugTime: 0

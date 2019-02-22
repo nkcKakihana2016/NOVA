@@ -4,17 +4,23 @@ using UnityEngine;
 using UniRx;
 using UniRx.Toolkit;
 
-public class PlanetPool : MonoBehaviour
+[System.Serializable]
+public class PlanetPool : ObjectPool<PlanetDestroy>
 {
-    // Start is called before the first frame update
-    void Start()
+    private readonly PlanetDestroy planetObj;
+    private Transform myTrans;
+
+    public PlanetPool(Transform trans,PlanetDestroy planetPre)
     {
-        
+        myTrans = trans;
+        planetObj = planetPre;
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override PlanetDestroy CreateInstance()
     {
-        
+        var e = GameObject.Instantiate(planetObj);
+        e.transform.SetParent(myTrans);
+
+        return e;
     }
 }
