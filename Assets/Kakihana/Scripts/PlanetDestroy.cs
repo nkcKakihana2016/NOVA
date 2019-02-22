@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UniRx;
+using System;
 
 public class PlanetDestroy : MonoBehaviour
 {
@@ -27,12 +29,31 @@ public class PlanetDestroy : MonoBehaviour
     void Update()
     {
         // 経過時間をカウントし格納
-        time += Time.deltaTime;
-        if (time > 30.0f)
-        {
-            // 30秒経つとにスポーンクラスに消滅情報を送る
-            PlanetSpawner.Instance.PlanetDestroy();
-            Destroy(this.gameObject);
-        }
+        //time += Time.deltaTime;
+        //if (time > 30.0f)
+        //{
+        //    // 30秒経つとにスポーンクラスに消滅情報を送る
+        //    PlanetSpawner.Instance.PlanetDestroy();
+        //    Destroy(this.gameObject);
+        //}
+    }
+
+    // 出現後、30秒経過したら非表示にする
+    public IObservable<UniRx.Unit> PlanetSpawn(Vector3 pos)
+    {
+        transform.position = pos;
+
+        return Observable.Timer(TimeSpan.FromSeconds(30.0f)).
+            ForEachAsync(_ => Stop());
+    }
+
+    // 惑星非表示メソッド
+    public void Stop()
+    {
+        // 30秒経つとにスポーンクラスに消滅情報を送る
+        PlanetSpawner.Instance.PlanetDestroy();
+        Destroy(this.gameObject);
+        // 下はオブジェクトプール用
+        //this.gameObject.SetActive(false);
     }
 }

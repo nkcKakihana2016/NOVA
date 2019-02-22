@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 using Random = UnityEngine.Random; // ランダム関数はUnityEngineの物を使う
 
-public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
+public class PlanetSpawnerBkup : PlanetSingleton<PlanetSpawner>
 {
     // 惑星自動生成スクリプト
 
@@ -53,7 +53,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         Observable.IntervalFrame(120)
             .Do(_ => Debug.Log("PlanetCreate")).Subscribe(_ =>
             {
-                if(count < planetMaxnum)
+                if (count < planetMaxnum)
                 {
                     if (count < hotSpotMax)
                     {
@@ -118,10 +118,10 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         xAbs = Mathf.Abs(Mathf.Pow(spawnPos.x, 2));
         zAbs = Mathf.Abs(Mathf.Pow(spawnPos.z, 2));
         // 惑星をスポーンする前にスポーンしたい惑星の大きさと同じ球型Rayを飛ばす
-        if (Physics.SphereCast(spawnPos,planetObjRadius[planetObjNum],Vector3.down,out hit))
+        if (Physics.SphereCast(spawnPos, planetObjRadius[planetObjNum], Vector3.down, out hit))
         {
             // 既に惑星がいる場合はスポーン不可
-            Debug.DrawRay(spawnPos, hit.point, Color.red,5);
+            Debug.DrawRay(spawnPos, hit.point, Color.red, 5);
             Debug.Log("スポーン不可");
         }
         else
@@ -131,15 +131,15 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
             {
                 Debug.DrawRay(spawnPos, hit.point, Color.red);
                 Debug.Log("惑星スポーン");
-                //planetPool = new PlanetPool(hierarchyTrans, planetPrefab[planetObjNum]);
-                //var planet = planetPrefab[planetObjNum];
-                //planet = planetPool.Rent();
-                //planet.PlanetSpawn(spawnPos).Subscribe(__ =>
-                //{
-                //    planetPool.Return(planet);
-                //});
+                planetPool = new PlanetPool(hierarchyTrans, planetPrefab[planetObjNum]);
+                var planet = planetPrefab[planetObjNum];
+                planet = planetPool.Rent();
+                planet.PlanetSpawn(spawnPos).Subscribe(__ =>
+                {
+                    planetPool.Return(planet);
+                });
                 // 惑星生成
-                Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
+                //Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
                 count++;
             }
             else
@@ -154,7 +154,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     {
         // 惑星プレハブのアタッチ分、半径を格納する配列の初期化
         planetObjRadius = new float[planetPrefab.Length];
-        for(int i = 0;i < planetPrefab.Length; ++i)
+        for (int i = 0; i < planetPrefab.Length; ++i)
         {
             // プレハブに格納されている全ての惑星の半径を取得し配列に格納する
             planetObjRadius[i] = planetPrefab[i].myTrans.localScale.x * 0.5f;
