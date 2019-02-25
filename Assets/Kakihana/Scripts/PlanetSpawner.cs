@@ -21,12 +21,16 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private float hotSpotRadiusMin;            // ボス周辺エリアスポーン範囲の最小半径
 
     [SerializeField] private float planetSpawnHeight;
+    [SerializeField] private float stageSize;                   // ランダム生成の範囲
+
+    [Header("デバッグ用に値を変更可能")]
+    [SerializeField] private int planetSpawnInterval;         // 惑星の再出現までのフレーム
 
     [Header("シーン毎に設定が必要なコンポーネント")]
     [SerializeField] private Transform bossObjTrans;            // ボスオブジェクトのトランスフォーム
     [SerializeField] private PlanetDestroy[] planetPrefab;      // スポーンする惑星をここに格納
-    [SerializeField] private PlanetPool planetPool;
-    [SerializeField] private Transform hierarchyTrans;
+    [SerializeField] private PlanetPool planetPool;             // 惑星のオブジェクトプール
+    [SerializeField] private Transform hierarchyTrans;          // スポーンしたオブジェクトをまとめるために必要
 
     [Header("自動稼働し、設定する必要がないもの")]
     [SerializeField] private int count;                         // 現在のスポーン数
@@ -42,15 +46,20 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     // Start is called before the first frame update
     void Start()
     {
-        bossRadius = bossObjTrans.localScale.x * Mathf.PI; // ボスオブジェクトの円周を求める
+        // ボスオブジェクトの円周を求める
+        bossRadius = bossObjTrans.localScale.x * Mathf.PI;
+        // 初期化メソッド
         PlanetInit();
 
         // ボス周辺エリアの半径を2乗する
         maxR = Mathf.Pow(hotSpotRadiusMax, 2);
         minR = Mathf.Pow(hotSpotRadiusMin, 2);
 
+        // オブジェクトプールの初期化
+        planetPool = new PlanetPool(hierarchyTrans,planetPrefab[0]);
+
         // 2秒ごとに実行
-        Observable.IntervalFrame(10)
+        Observable.IntervalFrame(planetSpawnInterval)
             .Do(_ => Debug.Log("PlanetCreate")).Subscribe(_ =>
             {
                 if(count < planetMaxnum)
@@ -70,24 +79,21 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 }
             }).AddTo(this.gameObject);
 
+        // 60秒毎にオブジェクトプールをリフレッシュする
         Observable.Timer(TimeSpan.FromSeconds(60.0f)).Subscribe(_ =>
         {
-            //planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
-            planetPool.Clear();
+            // オブジェクトプールのリフレッシュを行う
+            // 現在のオブジェクトプールを50%削減するが最低でも10個残す
+            planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
+            //planetPool.Clear();
             Debug.Log("Pool開放");
         });
-
-        this.OnDestroyAsObservable().Subscribe(_ => planetPool.Dispose());
     }
 
     // Update is called once per frame
     void Update()
     {
-        //debugTime += Time.deltaTime;
-        //if (debugTime >= 60.0f)
-        //{
-        //    //SceneManager.LoadScene("Test3");
-        //}
+
     }
 
     // 通常スポーン用
@@ -96,11 +102,17 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         if (count == planetMaxnum) return; // 30回生成されたらこのメソッドは起動しない
         planetObjNum = Random.Range(0, planetPrefab.Length); // 生成したい惑星を取得
 
-        spawnPos.x = Random.Range(-20.0f, 20.0f); // 生成座標の設定
+        spawnPos.x = Random.Range(-stageSize, stageSize); // 生成座標の設定
         spawnPos.y = 0.0f;
-        spawnPos.z = Random.Range(-20.0f, 20.0f);
+        spawnPos.z = Random.Range(-stageSize, stageSize);
 
-        Instantiate(planetPrefab[planetObjNum], spawnPos, Quaternion.identity);
+        var planet = planetPool.Rent();
+        planet.PlanetSpawn(spawnPos).Subscribe(__ =>
+        {
+            planetPool.Return(planet);
+        });
+        // 惑星生成
+        //Instantiate(planetPrefab[planetObjNum], spawnPos, Quaternion.identity);
         count++;
     }
     // ボス周辺エリア専用スポーン
@@ -131,15 +143,13 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
             {
                 Debug.DrawRay(spawnPos, hit.point, Color.red);
                 Debug.Log("惑星スポーン");
-                //planetPool = new PlanetPool(hierarchyTrans, planetPrefab[planetObjNum]);
-                //var planet = planetPrefab[planetObjNum];
-                //planet = planetPool.Rent();
-                //planet.PlanetSpawn(spawnPos).Subscribe(__ =>
-                //{
-                //    planetPool.Return(planet);
-                //});
+                var planet = planetPool.Rent();
+                planet.PlanetSpawn(spawnPos + bossObjTrans.position).Subscribe(__ =>
+                {
+                    planetPool.Return(planet);
+                });
                 // 惑星生成
-                Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
+                //Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
                 count++;
             }
             else
@@ -168,6 +178,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         count--;
     }
 
+    // シーン名取得メソッド
     public string NowSceneName()
     {
         return SceneManager.GetActiveScene().name;

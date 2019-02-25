@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UniRx;
+using UniRx.Triggers;
 using System;
 
 public class PlanetDestroy : MonoBehaviour
@@ -16,6 +17,8 @@ public class PlanetDestroy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.gameObject.SetActive(true);
+        //Observable.EveryUpdate().TakeUntilDestroy(this.gameObject).Subscribe();
         // スポーン時にシーン名を取得
         sceneName = PlanetSpawner.Instance.NowSceneName();
         // シーンが切り替わってもDestroyしない問題を解決
@@ -43,8 +46,8 @@ public class PlanetDestroy : MonoBehaviour
     {
         transform.position = pos;
 
-        return Observable.Timer(TimeSpan.FromSeconds(30.0f)).
-            ForEachAsync(_ => Stop());
+        return Observable.Timer(TimeSpan.FromSeconds(30.0f))
+            .ForEachAsync(_ => { Stop(); }).TakeUntilDestroy(this.gameObject);
     }
 
     // 惑星非表示メソッド
@@ -52,8 +55,8 @@ public class PlanetDestroy : MonoBehaviour
     {
         // 30秒経つとにスポーンクラスに消滅情報を送る
         PlanetSpawner.Instance.PlanetDestroy();
-        Destroy(this.gameObject);
+        //Destroy(this.gameObject);
         // 下はオブジェクトプール用
-        //this.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 }
