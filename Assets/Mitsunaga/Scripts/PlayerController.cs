@@ -4,6 +4,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using UniRx.Toolkit;
+using Cinemachine;
 
 public class PlayerController : _StarParam
 {
@@ -25,14 +26,20 @@ public class PlayerController : _StarParam
     GameObject[] holes;
     bool holeFlg;               // trueならブラックホール(0)、falseならホワイトホール(1)
 
+    // 衝突関連
     [SerializeField, Header("星の衝突時、合体時の待ち時間")]
     float hitStopCount = 0.03f;
     [SerializeField]
     float waitCount = 2;
 
+    // カメラ関連
+    [SerializeField, Header("シネマシーンのカメラ")]
+    CinemachineVirtualCamera vcam;
+    const float CDISTANCE = 50.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
+    float cursorPosZ;
+
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
     const float MOVEDISTANCE = 10.0f;   // マウスの反応する距離　これ+星の直径
-    const float CDISTANCE = 50.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
 
     new void Awake()
     {
@@ -45,6 +52,8 @@ public class PlayerController : _StarParam
         holeFlg = true;
         holes[1].SetActive(false);
         holes[0].SetActive(true);
+
+        SetCamera();
     }
 
     void Start()
@@ -88,10 +97,12 @@ public class PlayerController : _StarParam
                 {
                     // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
                     Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount))
-                    .Subscribe(t => Debug.Log(t));
+                    .Subscribe(t => Debug.Log(t),
+                              () => SetCamera());
 
                     SetStarSize(x.gameObject.transform.localScale.x / 2);
                     Destroy(x.gameObject);
+
                 }
                 else
                 {
@@ -116,6 +127,13 @@ public class PlayerController : _StarParam
             playerRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - playerRig.velocity));
         }
     }
+    // カメラの処理
+    void SetCamera()
+    {
+        cursorPosZ = CDISTANCE + (transform.localScale.x / 2);
+        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y = cursorPosZ;
+        Debug.Log("SetCamera Completed");
+    }
 
     // 衝突後の待ち時間を管理するコルーチン
     // 待機時間が終わるまでRigidbody.isLinematicをtrueにすることで動きを止める
@@ -134,7 +152,7 @@ public class PlayerController : _StarParam
         }
 
         playerRig.isKinematic = false;
-        observer.OnNext(waitCount);                     // デバッグ用
+        observer.OnCompleted();                     // デバッグ用
     }
 
     // 衝突時のヒットストップを管理するコルーチン
