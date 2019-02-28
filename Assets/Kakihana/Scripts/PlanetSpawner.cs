@@ -84,16 +84,10 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         {
             // オブジェクトプールのリフレッシュを行う
             // 現在のオブジェクトプールを50%削減するが最低でも10個残す
-            planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
-            //planetPool.Clear();
+            //planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
+            planetPool.Clear();
             Debug.Log("Pool開放");
         });
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     // 通常スポーン用
@@ -107,13 +101,15 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         spawnPos.z = Random.Range(-stageSize, stageSize);
 
         var planet = planetPool.Rent();
-        planet.PlanetSpawn(spawnPos).Subscribe(__ =>
-        {
-            planetPool.Return(planet);
-        });
-        // 惑星生成
-        //Instantiate(planetPrefab[planetObjNum], spawnPos, Quaternion.identity);
         count++;
+        // 惑星生成
+        planet.PlanetSpawn(spawnPos);
+        // 消滅時、オブジェクトをプールに返す
+        planet.OnDisableAsObservable().Subscribe(_ =>
+        {
+            planet.Stop();
+            planetPool.Return(planet);
+        }).AddTo(planet);
     }
     // ボス周辺エリア専用スポーン
     private void HotSpotCreate()
@@ -144,13 +140,20 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 Debug.DrawRay(spawnPos, hit.point, Color.red);
                 Debug.Log("惑星スポーン");
                 var planet = planetPool.Rent();
-                planet.PlanetSpawn(spawnPos + bossObjTrans.position).Subscribe(__ =>
-                {
-                    planetPool.Return(planet);
-                });
                 // 惑星生成
                 //Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
                 count++;
+                planet.PlanetSpawn(spawnPos + bossObjTrans.position);
+                // 消滅時、オブジェクトをプールに返す
+                planet.OnDisableAsObservable().Subscribe(_ =>
+                {
+                    planet.Stop();
+                    planetPool.Return(planet);
+                }).AddTo(planet);
+                //.Subscribe(__ =>
+                //{
+                //    planetPool.Return(planet);
+                //});
             }
             else
             {

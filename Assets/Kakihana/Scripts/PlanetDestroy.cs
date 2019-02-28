@@ -18,7 +18,6 @@ public class PlanetDestroy : MonoBehaviour
     void Start()
     {
         this.gameObject.SetActive(true);
-        //Observable.EveryUpdate().TakeUntilDestroy(this.gameObject).Subscribe();
         // スポーン時にシーン名を取得
         sceneName = PlanetSpawner.Instance.NowSceneName();
         // シーンが切り替わってもDestroyしない問題を解決
@@ -26,6 +25,7 @@ public class PlanetDestroy : MonoBehaviour
         {
             Destroy(this.gameObject);
         }
+        
     }
 
     // Update is called once per frame
@@ -41,22 +41,36 @@ public class PlanetDestroy : MonoBehaviour
         //}
     }
 
-    // 出現後、30秒経過したら非表示にする
-    public IObservable<UniRx.Unit> PlanetSpawn(Vector3 pos)
+    // 惑星スポーンの座標設定
+    public void PlanetSpawn(Vector3 pos)
     {
         transform.position = pos;
 
-        return Observable.Timer(TimeSpan.FromSeconds(30.0f))
-            .ForEachAsync(_ => { Stop(); }).TakeUntilDestroy(this.gameObject);
+        //return Observable.TakeUntil(this.OnDisableAsObservable(Stop())).Subscribe().AddTo(this.gameObject);
+    }
+
+    // 消滅情報をスポーンクラスに送る
+    public void Stop()
+    {
+        PlanetSpawner.Instance.PlanetDestroy();
+        this.gameObject.SetActive(false);
     }
 
     // 惑星非表示メソッド
-    public void Stop()
-    {
-        // 30秒経つとにスポーンクラスに消滅情報を送る
-        PlanetSpawner.Instance.PlanetDestroy();
-        //Destroy(this.gameObject);
-        // 下はオブジェクトプール用
-        this.gameObject.SetActive(false);
-    }
+    //public IObservable<Unit> Stop()
+    //{
+    //    var stop = Observable.EveryUpdate().Where(_ => this.OnDiasbleAsObservable());
+    //    var r = Observable.EveryUpdate().Where(this.OnEnableAsObservable()).TakeUntil(this.OnDisableAsObservable().Subscribe(_ =>
+    //    {
+    //        PlanetSpawner.Instance.PlanetDestroy();
+    //        this.gameObject.SetActive(false);
+    //    }).AddTo(this.gameObject));
+    //    30秒経つとにスポーンクラスに消滅情報を送る
+    //    /*
+    //                 PlanetSpawner.Instance.PlanetDestroy();
+    //        this.gameObject.SetActive(false);*/
+    //    Destroy(this.gameObject);
+    //    下はオブジェクトプール用
+
+    //}
 }

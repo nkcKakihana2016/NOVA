@@ -399,7 +399,7 @@ MonoBehaviour:
   planetMaxnum: 50
   hotSpotMax: 35
   hotSpotRadiusMax: 150
-  hotSpotRadiusMin: 50
+  hotSpotRadiusMin: 60
   planetSpawnHeight: 0
   stageSize: 140
   planetSpawnInterval: 10

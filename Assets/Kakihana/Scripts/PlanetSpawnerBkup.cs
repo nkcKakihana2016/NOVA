@@ -134,11 +134,11 @@ public class PlanetSpawnerBkup : PlanetSingleton<PlanetSpawner>
                 planetPool = new PlanetPool(hierarchyTrans, planetPrefab[planetObjNum]);
                 var planet = planetPrefab[planetObjNum];
                 planet = planetPool.Rent();
-                planet.PlanetSpawn(spawnPos).Subscribe(__ =>
-                {
-                    planetPool.Return(planet);
-                });
-                // 惑星生成
+                //planet.PlanetSpawn(spawnPos).Subscribe(__ =>
+                //{
+                //    planetPool.Return(planet);
+                //});
+                //// 惑星生成
                 //Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
                 count++;
             }
