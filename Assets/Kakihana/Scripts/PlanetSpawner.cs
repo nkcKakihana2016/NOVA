@@ -83,9 +83,8 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         Observable.Timer(TimeSpan.FromSeconds(60.0f)).Subscribe(_ =>
         {
             // オブジェクトプールのリフレッシュを行う
-            // 現在のオブジェクトプールを50%削減するが最低でも10個残す
-            //planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
-            planetPool.Clear();
+            // 現在のオブジェクトプールを50%削減するが最低でも生成した分は残す
+            planetPool.Shrink(instanceCountRatio: 0.5f, minSize: count, callOnBeforeRent: false);
             Debug.Log("Pool開放");
         });
     }
@@ -100,6 +99,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         spawnPos.y = 0.0f;
         spawnPos.z = Random.Range(-stageSize, stageSize);
 
+        // オブジェクトプールに追加
         var planet = planetPool.Rent();
         count++;
         // 惑星生成
@@ -139,9 +139,9 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
             {
                 Debug.DrawRay(spawnPos, hit.point, Color.red);
                 Debug.Log("惑星スポーン");
+                // オブジェクトプールに追加
                 var planet = planetPool.Rent();
-                // 惑星生成
-                //Instantiate(planetPrefab[planetObjNum], spawnPos + bossObjTrans.position, Quaternion.identity);
+                // 惑星スポーン、数をカウント
                 count++;
                 planet.PlanetSpawn(spawnPos + bossObjTrans.position);
                 // 消滅時、オブジェクトをプールに返す
@@ -150,10 +150,6 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                     planet.Stop();
                     planetPool.Return(planet);
                 }).AddTo(planet);
-                //.Subscribe(__ =>
-                //{
-                //    planetPool.Return(planet);
-                //});
             }
             else
             {

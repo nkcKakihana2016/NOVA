@@ -745,6 +745,8 @@ MonoBehaviour:
   - {fileID: 1871075773}
   hitStopCount: 0.03
   waitCount: 2
+  hitPS: []
+  vcam: {fileID: 623676553}
 --- !u!54 &1823543070
 Rigidbody:
   m_ObjectHideFlags: 0

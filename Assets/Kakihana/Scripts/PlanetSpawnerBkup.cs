@@ -72,24 +72,12 @@ public class PlanetSpawnerBkup : PlanetSingleton<PlanetSpawner>
 
         Observable.Timer(TimeSpan.FromSeconds(60.0f)).Subscribe(_ =>
         {
-            //planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
-            planetPool.Clear();
+            planetPool.Shrink(instanceCountRatio: 0.5f, minSize: 10, callOnBeforeRent: false);
             Debug.Log("Pool開放");
         });
 
         this.OnDestroyAsObservable().Subscribe(_ => planetPool.Dispose());
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //debugTime += Time.deltaTime;
-        //if (debugTime >= 60.0f)
-        //{
-        //    //SceneManager.LoadScene("Test3");
-        //}
-    }
-
     // 通常スポーン用
     void PlanetCreate()
     {
