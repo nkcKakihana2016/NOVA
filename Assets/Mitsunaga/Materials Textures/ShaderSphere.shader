@@ -1,4 +1,4 @@
-﻿Shader "Custom/SphereShader" 
+﻿Shader "Custom/ShaderSphere" 
 {
 	Properties
 	{

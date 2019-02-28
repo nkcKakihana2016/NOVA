@@ -15,7 +15,7 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
+  - Transition
   - 
   - 
   - 
@@ -41,4 +41,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Transition
+    uniqueID: 2240073421
     locked: 0

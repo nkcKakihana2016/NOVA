@@ -13,17 +13,22 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     // ゲームシーンのステート
     public enum GameState
     {
-        Start,          // スタート画面
+        Title,          // スタート画面
         StageSelect,    // ステージセレクト画面
-        Stage01,           // メインゲーム画面
-        Stage02          // リザルト画面
+        Main,           // メインゲーム画面
     }
     GameState gameState;        // 現在のステート
     GameState nextGameState;    // デバッグ用　次のステート
 
+    [SerializeField, Header("シーン遷移")]
+    FadeSystem fadeSystem;
+    [SerializeField]
+    float fadeTime;
+
+
+    [Header("ここから下は確認用")]
     // プレイヤーの情報
     public Transform playerTransform;
-
     // フラグ管理
     public BoolReactiveProperty isClear = new BoolReactiveProperty(false);       // クリア
     public BoolReactiveProperty isGameOver = new BoolReactiveProperty(false);    // ゲームオーバー
@@ -63,13 +68,12 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
         this.ObserveEveryValueChanged(c => c.gameState)
             .Subscribe(_ => ChangeState(gameState))
             .AddTo(gameObject);
-    }
 
-    // デバッグ用
-    void Update()
-    {
-    }
 
+        // 各種読み込みが完了したら、タイトル画面を読み込む
+        //SceneManager.LoadScene(1);
+        //FadeIn();
+    }
     // ステートの変更
     // nextState … 次のシーンのステート(GameState)
     public void NextState(GameState nextState)
@@ -82,22 +86,41 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     {
         switch (gameState)
         {
-            case GameState.Start:
-                Debug.Log("ChangeState Start");
-                SceneManager.LoadScene(1);
+            case GameState.Title:
+                Debug.Log("ChangeState Title");
+                FadeOut(1);
                 break;
             case GameState.StageSelect:
                 Debug.Log("ChangeState StageSelect");
-                SceneManager.LoadScene(2);
+                FadeOut(2);
                 break;
-            case GameState.Stage01:
+            case GameState.Main:
                 Debug.Log("ChangeState Main");
-                SceneManager.LoadScene(3);
-                break;
-            case GameState.Stage02:
-                Debug.Log("ChangeState Result");
-                SceneManager.LoadScene(4);
+                FadeOut(3);
                 break;
         }
+    }
+
+    // シーン遷移
+    // フェードアウト後にシーンを切り替え、フェードインする(ポーズにしておく)
+    void FadeOut(int sceneNumber)
+    {
+        isPause.Value = true;
+        IObservable<bool> obsOut = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeOutCoroutine(observer, fadeTime));
+        obsOut.Subscribe(onCompleted => 
+        {
+            Debug.Log("FadeOut!");
+            SceneManager.LoadScene(sceneNumber);
+            FadeIn();
+        });
+    }
+    void FadeIn()
+    {
+        IObservable<bool> obsIn = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeInCoroutine(observer, fadeTime));
+        obsIn.Subscribe(onCompleted => 
+        {
+            Debug.Log("FadeIn!");
+            isPause.Value = false;
+        });
     }
 }
