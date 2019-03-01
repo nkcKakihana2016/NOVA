@@ -31,6 +31,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private PlanetDestroy[] planetPrefab;      // スポーンする惑星をここに格納
     [SerializeField] private PlanetPool planetPool;             // 惑星のオブジェクトプール
     [SerializeField] private Transform hierarchyTrans;          // スポーンしたオブジェクトをまとめるために必要
+    [SerializeField] private Vector3[] planetScales;            // 惑星の大きさの格納できる配列
 
     [Header("自動稼働し、設定する必要がないもの")]
     [SerializeField] private int count;                         // 現在のスポーン数
@@ -103,7 +104,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         var planet = planetPool.Rent();
         count++;
         // 惑星生成
-        planet.PlanetSpawn(spawnPos);
+        planet.PlanetSpawn(spawnPos,planetScales[Random.Range(0,planetScales.Length)]);
         // 消滅時、オブジェクトをプールに返す
         planet.OnDisableAsObservable().Subscribe(_ =>
         {
@@ -118,6 +119,8 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         planetObjNum = Random.Range(0, planetPrefab.Length); // 生成したい惑星を取得
         RaycastHit hit;                                      // 惑星重なり防止用Rayの当たり判定
 
+        int scaleRandom = Random.Range(0, planetScales.Length);
+
         // スポーン座標をランダムで生成
         spawnPos.x = Random.Range(-hotSpotRadiusMax, hotSpotRadiusMax);
         spawnPos.y = planetSpawnHeight;
@@ -126,7 +129,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         xAbs = Mathf.Abs(Mathf.Pow(spawnPos.x, 2));
         zAbs = Mathf.Abs(Mathf.Pow(spawnPos.z, 2));
         // 惑星をスポーンする前にスポーンしたい惑星の大きさと同じ球型Rayを飛ばす
-        if (Physics.SphereCast(spawnPos,planetObjRadius[planetObjNum],Vector3.down,out hit))
+        if (Physics.SphereCast(spawnPos,planetObjRadius[scaleRandom],Vector3.down,out hit))
         {
             // 既に惑星がいる場合はスポーン不可
             Debug.DrawRay(spawnPos, hit.point, Color.red,5);
@@ -143,7 +146,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 var planet = planetPool.Rent();
                 // 惑星スポーン、数をカウント
                 count++;
-                planet.PlanetSpawn(spawnPos + bossObjTrans.position);
+                planet.PlanetSpawn(spawnPos + bossObjTrans.position,planetScales[scaleRandom]);
                 // 消滅時、オブジェクトをプールに返す
                 planet.OnDisableAsObservable().Subscribe(_ =>
                 {
@@ -162,11 +165,11 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     void PlanetInit()
     {
         // 惑星プレハブのアタッチ分、半径を格納する配列の初期化
-        planetObjRadius = new float[planetPrefab.Length];
-        for(int i = 0;i < planetPrefab.Length; ++i)
+        planetObjRadius = new float[planetScales.Length];
+        for(int i = 0;i < planetScales.Length; ++i)
         {
             // プレハブに格納されている全ての惑星の半径を取得し配列に格納する
-            planetObjRadius[i] = planetPrefab[i].myTrans.localScale.x * 0.5f;
+            planetObjRadius[i] = planetScales[i].x * 0.5f;
         }
     }
 

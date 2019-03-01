@@ -33,6 +33,13 @@ public class PlanetDestroy : MonoBehaviour
         transform.position = pos;
     }
 
+    // 惑星スポーンの設定（オーバーロード、スケール値追加）
+    public void PlanetSpawn(Vector3 pos,Vector3 scale)
+    {
+        transform.position = pos;
+        transform.localScale = scale;
+    }
+
     // 消滅情報をスポーンクラスに送る
     public void Stop()
     {

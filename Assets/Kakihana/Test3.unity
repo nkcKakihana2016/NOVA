@@ -407,6 +407,12 @@ MonoBehaviour:
   planetPrefab:
   - {fileID: 5573208887694944742, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
   hierarchyTrans: {fileID: 781285315}
+  planetScales:
+  - {x: 1, y: 1, z: 1}
+  - {x: 2, y: 2, z: 2}
+  - {x: 3, y: 3, z: 3}
+  - {x: 4, y: 4, z: 4}
+  - {x: 5, y: 5, z: 5}
   count: 0
   planetObjNum: 0
   planetObjRadius: []
