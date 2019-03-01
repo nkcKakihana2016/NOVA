@@ -9,7 +9,7 @@ public class IsGameOver : MonoBehaviour
 {
     void Start()
     {
-        GameManager.Instance.IOisGameOver
+        GameManager.Instance.isGameOver
             .Where(x => x)
             .Subscribe(_ =>
             {

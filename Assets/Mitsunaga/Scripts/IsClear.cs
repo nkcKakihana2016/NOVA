@@ -9,7 +9,7 @@ public class IsClear : MonoBehaviour
 {
     void Start()
     {
-        GameManager.Instance.IOisClear
+        GameManager.Instance.isClear
             .Where(x => x)
             .Subscribe(_ =>
             {

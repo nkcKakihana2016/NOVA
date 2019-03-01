@@ -182,6 +182,7 @@ MonoBehaviour:
   starSize:
     value: 4
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &70069510
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -307,6 +308,7 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!135 &186665133
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -486,7 +488,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 208316747}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff26db721962cdf4a8edcdfa9a767d2a, type: 3}
   m_Name: 
@@ -566,6 +568,7 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &213352982
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -691,6 +694,7 @@ MonoBehaviour:
   starSize:
     value: 10
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &305152798
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -816,6 +820,7 @@ MonoBehaviour:
   starSize:
     value: 4
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &377899177
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -941,6 +946,7 @@ MonoBehaviour:
   starSize:
     value: 10
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &388100382
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1135,6 +1141,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &426031328
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6233,6 +6240,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &741926548
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6358,6 +6366,7 @@ MonoBehaviour:
   starSize:
     value: 4
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &781640282
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6625,6 +6634,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &889672601
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6750,6 +6760,7 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1039575422
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6966,6 +6977,7 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1168141269
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11865,6 +11877,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1204317396
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11990,6 +12003,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1235363059
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12115,6 +12129,7 @@ MonoBehaviour:
   starSize:
     value: 4
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1320626603
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12240,6 +12255,7 @@ MonoBehaviour:
   starSize:
     value: 10
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1327469100
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12365,6 +12381,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1357623165
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12545,6 +12562,7 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1424589752
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -12670,6 +12688,7 @@ MonoBehaviour:
   starSize:
     value: 10
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1546971531
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17552,6 +17571,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1572325670
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17677,6 +17697,7 @@ MonoBehaviour:
   starSize:
     value: 10
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1661877219
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17808,6 +17829,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1790416267
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -17933,6 +17955,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1815294614
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -18059,13 +18082,14 @@ MonoBehaviour:
   starSize:
     value: 5
   matTable: {fileID: 11400000, guid: 96b6a0c9446801d499c9e1c5f614c9cf, type: 2}
+  starRig: {fileID: 0}
   moveSpeed: 30
   moveSpeedMul: 3
   cursorParent: {fileID: 1706350068}
   holes:
   - {fileID: 8295738123288792351}
   - {fileID: 1597604906413072524}
-  hitStopCount: 0.03
+  hitStopCount: 10
   waitCount: 4.5
   hitPS:
   - {fileID: 1558515569}
@@ -18247,6 +18271,7 @@ MonoBehaviour:
   starSize:
     value: 2
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &1980764514
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -23146,6 +23171,7 @@ MonoBehaviour:
   starSize:
     value: 4
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  starRig: {fileID: 0}
 --- !u!54 &2118902383
 Rigidbody:
   m_ObjectHideFlags: 0

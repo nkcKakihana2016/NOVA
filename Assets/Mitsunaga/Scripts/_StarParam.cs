@@ -11,14 +11,17 @@ public class _StarParam : MonoBehaviour
     [SerializeField, Header("星のID (使用用途については要相談)")]
     public int starID = 0;  // 自機やボスなどを特定できるようにするために使うかな？
 
-    [SerializeField, Header("星のサイズ")]
+    [SerializeField, Header("星の初期サイズ")]
     FloatReactiveProperty starSize = new FloatReactiveProperty(1.0f);
 
     [SerializeField,Header("マテリアル初期化用パラメータ")]
     MatTable matTable;
+    Material starMat;
 
     IEnumerator routine;    // コルーチン用　コルーチンの管理
     float nextSize = 1.0f;  // コルーチン用　目標の星のサイズ
+
+    public Rigidbody starRig;   // 星のRigidbody
 
     public void Awake()
     {
@@ -34,11 +37,14 @@ public class _StarParam : MonoBehaviour
 
         // 初期設定
         InitMaterial();
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionY;
+        
+        // Rigidbodyを取得して、Y軸の移動を停止させる
+        starRig = GetComponent<Rigidbody>();
+        starRig.constraints = RigidbodyConstraints.FreezePositionY;
     }
 
     // 星のサイズ設定
-    // float size … 変化量
+    // float size … 変化量　例えばほかの星を吸収した場合は、その星の半径を渡す
     public void SetStarSize(float size)
     {
         // コルーチンがうまく止められないのでいったんNULLにしてから設定しなおす、という…
@@ -66,7 +72,7 @@ public class _StarParam : MonoBehaviour
     public void InitMaterial()
     {
         // マテリアルのいろいろな初期化
-        Material starMat = GetComponent<Renderer>().material;
+        starMat = GetComponent<Renderer>().material;
         starMat.SetColor    ("_Color1", matTable.color1);
         starMat.SetColor    ("_Color2", matTable.color2);
         starMat.SetTexture  ("_MainTex", matTable.tex1);

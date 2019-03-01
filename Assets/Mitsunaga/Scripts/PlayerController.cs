@@ -10,9 +10,6 @@ public class PlayerController : _StarParam
 {
     // プレイヤーとカメラのコントロールを行う
 
-    // プレイヤーのパラメータ関連
-    Rigidbody playerRig;                // プレイヤーのRigidbody
-
     // 星の移動関連
     [SerializeField, Header("星の加速度、加速度への追従度、反応距離")]
     float moveSpeed = 10.0f;
@@ -21,24 +18,23 @@ public class PlayerController : _StarParam
 
     // マウスカーソル関連
     [SerializeField, Header("マウスカーソルを追従するオブジェクト、その中身(0黒1白)")]
-    Transform cursorParent;
+    Transform cursorParent;     // カーソルに追従させる実際のオブジェクト(このオブジェクトの下にホールのパーティクルを入れる)
     [SerializeField]
-    GameObject[] holes;
+    GameObject[] holes;         // 0にブラックホール、1にホワイトホール
     bool holeFlg;               // trueならブラックホール(0)、falseならホワイトホール(1)
 
     // 衝突関連
-    [SerializeField, Header("星の衝突時、合体時の待ち時間")]
-    float hitStopCount = 0.03f;
+    [SerializeField, Header("星の衝突時、合体時の待ち時間、衝突時のパーティクル")]
+    int hitStopCount = 10;
     [SerializeField]
     float waitCount = 4.5f;
-    [SerializeField, Header("衝突時のパーティクル群(全部入れてね！)")]
+    [SerializeField]
     ParticleSystem[] hitPS;
 
     // カメラ関連
     [SerializeField, Header("シネマシーンのカメラ")]
     CinemachineVirtualCamera vcam;
-    const float CDISTANCE = 100.0f;      // マウスカーソルを置きたい奥行とカメラとの距離
-    float cursorPosZ;
+    const float CDISTANCE = 100.0f; // カメラの引き
 
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
     const float MOVEDISTANCE = 20.0f;   // マウスの反応する距離　これ+星の直径
@@ -49,7 +45,6 @@ public class PlayerController : _StarParam
 
         // プレイヤー情報
         // GameManager.Instance.playerTransform = this.gameObject.transform;
-        playerRig = GetComponent<Rigidbody>();
 
         holeFlg = true;
         holes[1].SetActive(false);
@@ -92,7 +87,7 @@ public class PlayerController : _StarParam
         // 当たり判定
         this.OnCollisionEnterAsObservable()
             .Where(x => x.gameObject.GetComponent<_StarParam>().starID != 1)
-            .Subscribe(x =>
+            .Subscribe(c =>
             {
                 foreach(ParticleSystem ps in hitPS)
                 {
@@ -100,20 +95,30 @@ public class PlayerController : _StarParam
                 }
 
                 // 当たった星のサイズが
-                // 自分と同じか小さければ星を破壊して合体
-                // 自分より大きければ自分が破壊される
-                if (x.transform.localScale.x <= transform.localScale.x)
+                if(c.transform.localScale.x <= (transform.localScale.x / 5))
                 {
-                    // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
-                    Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount,(x.transform.localScale.x/2)))
-                    .Subscribe(t => Debug.Log(t),
-                              () => SetCamera());
+                    // 1. 自分よりも圧倒的に小さければそのまま吸収
 
-                    x.gameObject.SetActive(false);
+                    SetStarSize(c.transform.localScale.x / 2);
+                    SetCamera();
+                    c.gameObject.SetActive(false);
+                }
+                else if (c.transform.localScale.x <= transform.localScale.x)
+                {
+                    // 2. 自分と同じくらいならばお互いを破壊して合体
+
+                    // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
+                    // コルーチンの終了時にカメラの修正を行う
+                    Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount,c.transform.localScale.x/2))
+                    .Subscribe(t => Debug.Log(t));
+
+                    c.gameObject.SetActive(false);
 
                 }
                 else
                 {
+                    // 3. 自分より大きければ自分が破壊される
+
                     //GameManager.Instance.isGameOver.Value = true;
                     this.gameObject.SetActive(false);
                 }
@@ -132,60 +137,71 @@ public class PlayerController : _StarParam
         if (Vector3.Distance(mousePos, transform.position) <= MOVEDISTANCE + transform.localScale.x)
         {
             Vector3 moveDir = (mousePos - transform.position).normalized;   // マウスカーソルへの方向を取得
-            playerRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - playerRig.velocity));
+            starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
         }
     }
     // カメラの処理
     void SetCamera()
     {
-        cursorPosZ = CDISTANCE + (transform.localScale.x / 2);
-        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y = cursorPosZ;
-        Debug.Log("SetCamera Completed");
+        // カメラ初期位置と星の半径を足した距離分、カメラを離す
+        float cPos = CDISTANCE + (transform.localScale.x / 2);
+        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y = cPos;
     }
 
     // 衝突後の待ち時間を管理するコルーチン
     // 待機時間が終わるまでRigidbody.isLinematicをtrueにすることで動きを止める
+    // observer  : 値を返すもの(ググってくれ)
+    // waitCount : 待ち時間(単位：秒)
+    // nextSize  : 待ち時間が終わった後に大きくする星のサイズ
     IEnumerator WaitCoroutine(System.IObserver<float> observer,float waitCount,float nextSize)
     {
         
         float count = 0.0f;                     // 待ち時間を計測する変数
-        float size = transform.localScale.x;// プレイヤーのサイズを保存する
+        float size = transform.localScale.x;    // プレイヤーのサイズを保存する
 
+        // ヒットストップを最初に起動する
         StartCoroutine(HitStopCoroutine(hitStopCount));
-        playerRig.isKinematic = true;
+
+        // プレイヤーを停止、星のサイズを0に
+        starRig.isKinematic = true;
         SetStarSize(-size);
 
-        while (count < waitCount- 0.5f)
+        while (count < waitCount - 0.5f)
         {
-            observer.OnNext(count += Time.deltaTime);   // デバッグ用
+            
+            observer.OnNext(count += Time.deltaTime);
 
             yield return null;
         }
 
+        // 待ち時間が終わる0.5秒前に、星のサイズを適用する
         SetStarSize(size + nextSize);
 
         while (count < waitCount)
         {
-            observer.OnNext(count += Time.deltaTime);   // デバッグ用
+            // 待ち時間のカウントを進め、デバッグ用の値を渡す
+            observer.OnNext(count += Time.deltaTime);
 
             yield return null;
         }
 
-        playerRig.isKinematic = false;
-
-        observer.OnCompleted();                     // デバッグ用
+        // プレイヤーの停止を終了、カメラをセットする
+        starRig.isKinematic = false;
+        SetCamera();
     }
 
     // 衝突時のヒットストップを管理するコルーチン
     // コライダーの判定を取ったときに、一瞬スローになる演出
-    IEnumerator HitStopCoroutine(float stopCount)
+    // stopFrame
+    IEnumerator HitStopCoroutine(int stopFrame)
     {
-        float count = 0.0f;
+        int count = 0;
 
         Time.timeScale = 0.05f;
-        while (count < stopCount)
+
+        while (count < stopFrame)
         {
-            count += Time.deltaTime;
+            count++;
 
             yield return null;
         }

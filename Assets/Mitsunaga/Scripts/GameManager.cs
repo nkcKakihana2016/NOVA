@@ -34,45 +34,19 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     public BoolReactiveProperty isGameOver = new BoolReactiveProperty(false);    // ゲームオーバー
     public BoolReactiveProperty isPause = new BoolReactiveProperty(false);       // 一時停止
 
-    // UniRxイベント
-    Subject<bool> isClearSubject = new Subject<bool>();     // クリア
-    public IObservable<bool> IOisClear { get { return isClearSubject; } }
-    Subject<bool> isGameOverSubject = new Subject<bool>();  // ゲームオーバー
-    public IObservable<bool> IOisGameOver { get { return isGameOverSubject; } }
-
     // 最初に呼び出されるシーンのタイミングでのみ処理される
     override protected void Awake()
     {
         // 親クラスのAwakeをはじめに呼び出す
         base.Awake();
 
-        Debug.Log("GameManager Awake!");
-
         // シーンが変わっても破棄されないようにする
         DontDestroyOnLoad(this.gameObject);
-
-        // クリア時に発行
-        isClear.Subscribe(c =>
-        {
-            isClearSubject.OnNext(isClear.Value);
-        })
-        .AddTo(gameObject);
-        // ゲームオーバー時に発行
-        isGameOver.Subscribe(c =>
-        {
-            isGameOverSubject.OnNext(isGameOver.Value);
-        })
-        .AddTo(gameObject);
 
         // ステートが変更されたとき、それに応じた処理を実行する
         this.ObserveEveryValueChanged(c => c.gameState)
             .Subscribe(_ => ChangeState(gameState))
             .AddTo(gameObject);
-
-
-        // 各種読み込みが完了したら、タイトル画面を読み込む
-        //SceneManager.LoadScene(1);
-        //FadeIn();
     }
     // ステートの変更
     // nextState … 次のシーンのステート(GameState)
