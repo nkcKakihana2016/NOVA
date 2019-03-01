@@ -11,8 +11,24 @@ public class EnemyAI : MonoBehaviour
         GetComponent<EnemyController>().enemyAISubject
             .Subscribe(i =>
             {
-                Debug.Log("Enemy!I : " + i.ToString());
+                StartCoroutine(AICoroutine(i));
 
             }).AddTo(gameObject);
+    }
+
+    IEnumerator AICoroutine(int AInum)
+    {
+        while (this.gameObject.activeInHierarchy)
+        {
+            // AIの番号に基づいた行動を実行
+            switch (AInum)
+            {
+                case 1:
+                    transform.LookAt(GameManager.Instance.playerTransform);
+                    break;
+            }
+
+            yield return null;
+        }
     }
 }

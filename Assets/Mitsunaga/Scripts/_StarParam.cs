@@ -12,16 +12,16 @@ public class _StarParam : MonoBehaviour
     public int starID = 0;  // 自機やボスなどを特定できるようにするために使うかな？
 
     [SerializeField, Header("星の初期サイズ")]
-    FloatReactiveProperty starSize = new FloatReactiveProperty(1.0f);
+    FloatReactiveProperty starSize = new FloatReactiveProperty(0.0f);
 
     [SerializeField,Header("マテリアル初期化用パラメータ")]
-    MatTable matTable;
-    Material starMat;
+    MatTable matTable;          // 適用するマテリアルテーブル
+    Material starMat;           // 星のマテリアル
 
-    IEnumerator routine;    // コルーチン用　コルーチンの管理
-    float nextSize = 1.0f;  // コルーチン用　目標の星のサイズ
+    IEnumerator routine;        // 星のサイズコルーチンの管理
+    float nextSize = 1.0f;      // 目標の星のサイズ
 
-    public Rigidbody starRig;   // 星のRigidbody
+    protected Rigidbody starRig;   // 星のRigidbody
 
     public void Awake()
     {
