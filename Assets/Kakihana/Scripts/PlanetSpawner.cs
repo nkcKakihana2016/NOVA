@@ -31,7 +31,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private PlanetDestroy[] planetPrefab;      // スポーンする惑星をここに格納
     [SerializeField] private PlanetPool planetPool;             // 惑星のオブジェクトプール
     [SerializeField] private Transform hierarchyTrans;          // スポーンしたオブジェクトをまとめるために必要
-    [SerializeField] private Vector3[] planetScales;            // 惑星の大きさの格納できる配列
+    [SerializeField] private float[] planetScales;            // 惑星の大きさの格納できる配列
 
     [Header("自動稼働し、設定する必要がないもの")]
     [SerializeField] private int count;                         // 現在のスポーン数
@@ -169,7 +169,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         for(int i = 0;i < planetScales.Length; ++i)
         {
             // プレハブに格納されている全ての惑星の半径を取得し配列に格納する
-            planetObjRadius[i] = planetScales[i].x * 0.5f;
+            planetObjRadius[i] = planetScales[i] * 0.5f;
         }
     }
 

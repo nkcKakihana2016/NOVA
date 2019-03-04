@@ -5,7 +5,7 @@ using UniRx;
 using UniRx.Toolkit;
 
 [System.Serializable]
-public class PlanetPool : ObjectPool<PlanetDestroy>
+public class PlanetPool : ObjectPool<EnemyController>
 {
 
     /* 
