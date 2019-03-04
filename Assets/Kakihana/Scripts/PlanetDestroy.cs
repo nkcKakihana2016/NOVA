@@ -27,50 +27,21 @@ public class PlanetDestroy : MonoBehaviour
         }
         
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // 経過時間をカウントし格納
-        //time += Time.deltaTime;
-        //if (time > 30.0f)
-        //{
-        //    // 30秒経つとにスポーンクラスに消滅情報を送る
-        //    PlanetSpawner.Instance.PlanetDestroy();
-        //    Destroy(this.gameObject);
-        //}
-    }
-
     // 惑星スポーンの座標設定
     public void PlanetSpawn(Vector3 pos)
     {
         transform.position = pos;
-
-        //return Observable.TakeUntil(this.OnDisableAsObservable(Stop())).Subscribe().AddTo(this.gameObject);
     }
 
+    // 惑星スポーンの設定（オーバーロード、スケール値追加）
+    public void PlanetSpawn(Vector3 pos,float scale)
+    {
+        transform.position = pos;
+        transform.localScale = new Vector3(scale,scale,scale);
+    }
     // 消滅情報をスポーンクラスに送る
     public void Stop()
     {
         PlanetSpawner.Instance.PlanetDestroy();
-        this.gameObject.SetActive(false);
     }
-
-    // 惑星非表示メソッド
-    //public IObservable<Unit> Stop()
-    //{
-    //    var stop = Observable.EveryUpdate().Where(_ => this.OnDiasbleAsObservable());
-    //    var r = Observable.EveryUpdate().Where(this.OnEnableAsObservable()).TakeUntil(this.OnDisableAsObservable().Subscribe(_ =>
-    //    {
-    //        PlanetSpawner.Instance.PlanetDestroy();
-    //        this.gameObject.SetActive(false);
-    //    }).AddTo(this.gameObject));
-    //    30秒経つとにスポーンクラスに消滅情報を送る
-    //    /*
-    //                 PlanetSpawner.Instance.PlanetDestroy();
-    //        this.gameObject.SetActive(false);*/
-    //    Destroy(this.gameObject);
-    //    下はオブジェクトプール用
-
-    //}
 }

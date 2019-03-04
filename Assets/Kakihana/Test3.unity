@@ -407,6 +407,17 @@ MonoBehaviour:
   planetPrefab:
   - {fileID: 5573208887694944742, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
   hierarchyTrans: {fileID: 781285315}
+  planetScales:
+  - 1
+  - 2
+  - 3
+  - 3.5
+  - 5
+  - 5.5
+  - 6.5
+  - 7
+  - 8.5
+  - 10
   count: 0
   planetObjNum: 0
   planetObjRadius: []
@@ -745,6 +756,8 @@ MonoBehaviour:
   - {fileID: 1871075773}
   hitStopCount: 0.03
   waitCount: 2
+  hitPS: []
+  vcam: {fileID: 623676553}
 --- !u!54 &1823543070
 Rigidbody:
   m_ObjectHideFlags: 0

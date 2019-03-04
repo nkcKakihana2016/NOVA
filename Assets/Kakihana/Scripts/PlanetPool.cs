@@ -5,12 +5,12 @@ using UniRx;
 using UniRx.Toolkit;
 
 [System.Serializable]
-public class PlanetPool : ObjectPool<PlanetDestroy>
+public class PlanetPool : ObjectPool<EnemyController>
 {
 
     /* 
      【オブジェクトプールクラス】
-     InstantiateとDestroyでは負荷が大きいのでオブジェクトが必要でなければ非表示にし
+     Unity標準機能のInstantiateとDestroyでは負荷が大きいのでオブジェクトが必要でなければ非表示にし
      必要な時に初期化して再び表示させる 
     */
     public readonly PlanetDestroy planetObj; // プールしたいプレファブ
