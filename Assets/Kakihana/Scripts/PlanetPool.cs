@@ -13,18 +13,18 @@ public class PlanetPool : ObjectPool<EnemyController>
      Unity標準機能のInstantiateとDestroyでは負荷が大きいのでオブジェクトが必要でなければ非表示にし
      必要な時に初期化して再び表示させる 
     */
-    public readonly PlanetDestroy planetObj; // プールしたいプレファブ
+    public readonly EnemyController planetObj; // プールしたいプレファブ
     private Transform myTrans;               // プールしたオブジェクトをまとめるオブジェクトの座標
 
     // コンストラクタ
-    public PlanetPool(Transform trans,PlanetDestroy planetPre)
+    public PlanetPool(Transform trans,EnemyController planetPre)
     {
         myTrans = trans;
         planetObj = planetPre;
     }
 
     // 惑星をスポーンさせる
-    protected override PlanetDestroy CreateInstance()
+    protected override EnemyController CreateInstance()
     {
         var e = GameObject.Instantiate(planetObj);
         e.transform.SetParent(myTrans);
