@@ -15,6 +15,7 @@ public class IsGameOver : MonoBehaviour
             {
                 // ここにゲームオーバー時の処理を書いてね
                 Debug.Log("IsGameOver : " + _.ToString());
+                GameManager.Instance.bigText.text = "GAME OVER...";
             })
             .AddTo(gameObject);
     }

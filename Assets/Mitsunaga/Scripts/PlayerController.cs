@@ -44,7 +44,7 @@ public class PlayerController : _StarParam
         base.Awake();
 
         // プレイヤー情報
-        // GameManager.Instance.playerTransform = this.gameObject.transform;
+        GameManager.Instance.playerTransform = this.gameObject.transform;
 
         holeFlg = true;
         holes[1].SetActive(false);
@@ -59,6 +59,9 @@ public class PlayerController : _StarParam
         this.FixedUpdateAsObservable()
             .Subscribe(_ => 
             {
+            // プレイヤー情報
+                GameManager.Instance.playerTransform = this.gameObject.transform;
+
             // マウスのクリック処理
                 if (Input.GetMouseButtonDown(0))
                 {
@@ -119,7 +122,7 @@ public class PlayerController : _StarParam
                 {
                     // 3. 自分より大きければ自分が破壊される
 
-                    //GameManager.Instance.isGameOver.Value = true;
+                    GameManager.Instance.isGameOver.Value = true;
                     this.gameObject.SetActive(false);
                 }
             });
@@ -130,13 +133,16 @@ public class PlayerController : _StarParam
     {
         Vector3 mouseScreen = Input.mousePosition;                      // マウスカーソルの座標を取得
         mouseScreen.z = CDISTANCE;                                      // 奥行を指定
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(mouseScreen); // スクリーン座標系からワールド座標系に変換
-        cursorParent.transform.position = mousePos;                     // マウスカーソルの座標にオブジェクトを同期
+        Vector3 cursorPos = Camera.main.ScreenToWorldPoint(mouseScreen); // スクリーン座標系からワールド座標系に変換
+        cursorParent.transform.position = cursorPos;                     // マウスカーソルの座標にオブジェクトを同期
+
+        GameManager.Instance.cursorPosition = cursorPos;
+        GameManager.Instance.cursorFlg = holeFlg;
 
         // 反応距離より近ければ、AddForceを適用
-        if (Vector3.Distance(mousePos, transform.position) <= MOVEDISTANCE + transform.localScale.x)
+        if (Vector3.Distance(cursorPos, transform.position) <= MOVEDISTANCE + transform.localScale.x)
         {
-            Vector3 moveDir = (mousePos - transform.position).normalized;   // マウスカーソルへの方向を取得
+            Vector3 moveDir = (cursorPos - transform.position).normalized;   // マウスカーソルへの方向を取得
             starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
         }
     }

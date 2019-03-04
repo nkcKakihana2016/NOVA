@@ -15,6 +15,7 @@ public class IsClear : MonoBehaviour
             {
                 // ここにクリア時の処理を書いてね
                 Debug.Log("IsClear : " + _.ToString());
+                GameManager.Instance.bigText.text = "CLEAR!";
             })
             .AddTo(gameObject);
     }
