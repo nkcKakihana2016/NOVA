@@ -272,11 +272,23 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1389477587}
   m_PrefabAsset: {fileID: 0}
+--- !u!198 &412648177 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 268624486666597186, guid: d26b203602ecc534d81abb7553587914,
+    type: 3}
+  m_PrefabInstance: {fileID: 1518914827}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &440714817 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4955830449840222799, guid: d7f32cc1d5c77ff4da0a3d891025f599,
     type: 3}
   m_PrefabInstance: {fileID: 1389477587}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &586738237 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 268624486380480318, guid: d26b203602ecc534d81abb7553587914,
+    type: 3}
+  m_PrefabInstance: {fileID: 1518914827}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &600371701
 GameObject:
@@ -322,8 +334,12 @@ MonoBehaviour:
   holes:
   - {fileID: 391554231}
   - {fileID: 440714817}
-  hitStopCount: 0.03
-  waitCount: 2
+  hitStopCount: 10
+  waitCount: 4.5
+  hitPS:
+  - {fileID: 1531329362}
+  - {fileID: 412648177}
+  - {fileID: 586738237}
   vcam: {fileID: 152847663}
 --- !u!54 &600371703
 Rigidbody:
@@ -409,7 +425,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -50}
   m_LocalScale: {x: 2, y: 2, z: 2}
-  m_Children: []
+  m_Children:
+  - {fileID: 1532917737}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -635,10 +652,17 @@ MonoBehaviour:
   hotSpotRadiusMax: 150
   hotSpotRadiusMin: 50
   planetSpawnHeight: 0
+  stageSize: 0
+  planetSpawnInterval: 0
   bossObjTrans: {fileID: 1768393975}
   planetPrefab:
-  - {fileID: 5573208887694944742, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
-  hierarchyTrans: {fileID: 0}
+  - {fileID: 6620282836372197336, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
+  hierarchyTrans: {fileID: 1581745096}
+  planetScales:
+  - 2
+  - 4
+  - 8
+  - 16
   count: 0
   planetObjNum: 0
   planetObjRadius: []
@@ -814,6 +838,117 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &1518914827
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 600371707}
+    m_Modifications:
+    - target: {fileID: 268624487515879268, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_Name
+      value: PS Collision
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d26b203602ecc534d81abb7553587914, type: 3}
+--- !u!198 &1531329362 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 268624486276436883, guid: d26b203602ecc534d81abb7553587914,
+    type: 3}
+  m_PrefabInstance: {fileID: 1518914827}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1532917737 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 268624487515879269, guid: d26b203602ecc534d81abb7553587914,
+    type: 3}
+  m_PrefabInstance: {fileID: 1518914827}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1581745095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1581745096}
+  m_Layer: 0
+  m_Name: starParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1581745096
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1581745095}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1768393971
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,6 +1058,9 @@ MonoBehaviour:
   starSize:
     value: 50
   matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
+  spawner: {fileID: 968193713}
+  enemyPS: {fileID: 7970975209574642911, guid: c8db0ae0e04693d41a9dcc92f7684285, type: 3}
+  AInum: 0
 --- !u!54 &1768393977
 Rigidbody:
   m_ObjectHideFlags: 0

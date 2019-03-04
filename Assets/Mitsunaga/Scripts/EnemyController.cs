@@ -35,7 +35,7 @@ public class EnemyController : _StarParam
     {
         base.Awake();
 
-        moveSpeed = UnityEngine.Random.Range(10.0f, 30.0f);
+        moveSpeed = UnityEngine.Random.Range(5.0f, 20.0f);
     }
 
     void Start()
@@ -49,13 +49,18 @@ public class EnemyController : _StarParam
             .Subscribe(i => Debug.Log("EnemyAI : " + i.ToString()));
 
         this.FixedUpdateAsObservable()
+            .Where(_ => !GameManager.Instance.isPause.Value)
+            .Where(_ => starID != 2)
             .Subscribe(_ =>
             {
+
+
                 // マウスカーソルの影響を受ける(プレイヤーよりも少ない)
                 if (Vector3.Distance(this.transform.position, GameManager.Instance.cursorPosition) 
                     <= cursorSpace + (this.transform.localScale.x / 2))
                 {
-                    Vector3 cursorDir = (GameManager.Instance.cursorPosition - this.transform.position).normalized;   // マウスカーソルへの方向を取得
+                    // マウスカーソルへの方向を取得
+                    Vector3 cursorDir = (GameManager.Instance.cursorPosition - this.transform.position).normalized;
                     starRig.AddForce(cursorSpeedMul * ((cursorDir * cursorSpeed) - starRig.velocity));
                 }
 
@@ -73,8 +78,6 @@ public class EnemyController : _StarParam
 
     IEnumerator AICoroutine(IObserver<string> observer ,int AInumber)
     {
-        
-
         switch (AInumber)
         {
             case 0: // ランダム方向にまっすぐ進む
@@ -94,12 +97,12 @@ public class EnemyController : _StarParam
 
         observer.OnNext("AI Number : " + AInumber.ToString() + "   Speed : " + moveSpeed.ToString());
 
-        while (this.gameObject.activeInHierarchy)
+        while (this.gameObject.activeInHierarchy && starID != 2)
         {
             Vector3 playerPos = GameManager.Instance.playerTransform.position;
 
             // プレイヤーが近くにいれば移動を実行、いなければ停止
-            if (Vector3.Distance(this.transform.position, playerPos) <= moveSpace)
+            if (Vector3.Distance(this.transform.position, playerPos) <= moveSpace && !GameManager.Instance.isPause.Value)
             {
 
                 if (isLookPlayer)

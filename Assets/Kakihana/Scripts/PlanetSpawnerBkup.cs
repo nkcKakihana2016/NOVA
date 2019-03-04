@@ -24,7 +24,7 @@ public class PlanetSpawnerBkup : PlanetSingleton<PlanetSpawner>
 
     [Header("シーン毎に設定が必要なコンポーネント")]
     [SerializeField] private Transform bossObjTrans;            // ボスオブジェクトのトランスフォーム
-    [SerializeField] private PlanetDestroy[] planetPrefab;      // スポーンする惑星をここに格納
+    [SerializeField] private EnemyController[] planetPrefab;      // スポーンする惑星をここに格納
     [SerializeField] private PlanetPool planetPool;
     [SerializeField] private Transform hierarchyTrans;
 
@@ -145,7 +145,7 @@ public class PlanetSpawnerBkup : PlanetSingleton<PlanetSpawner>
         for (int i = 0; i < planetPrefab.Length; ++i)
         {
             // プレハブに格納されている全ての惑星の半径を取得し配列に格納する
-            planetObjRadius[i] = planetPrefab[i].myTrans.localScale.x * 0.5f;
+            // planetObjRadius[i] = planetPrefab[i].myTrans.localScale.x * 0.5f;
         }
     }
 

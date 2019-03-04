@@ -57,6 +57,7 @@ public class PlayerController : _StarParam
     {
         // 毎フレーム呼び出される
         this.FixedUpdateAsObservable()
+            .Where(c => !GameManager.Instance.isPause.Value)
             .Subscribe(_ => 
             {
             // プレイヤー情報
@@ -124,6 +125,11 @@ public class PlayerController : _StarParam
 
                     GameManager.Instance.isGameOver.Value = true;
                     this.gameObject.SetActive(false);
+                }
+
+                if(c.gameObject.GetComponent<_StarParam>().starID == 2)
+                {
+                    GameManager.Instance.isClear.Value = true;
                 }
             });
     }
