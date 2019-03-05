@@ -42,11 +42,16 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private float maxR, minR;                  // ボス周辺エリアスポーンの最小範囲と最大範囲を2乗したもの
 
     [SerializeField] private Vector3 spawnPos;                  // スポーンする惑星の座標
-
+    [SerializeField] private Transform playerPos;
+    [SerializeField] private Vector3 debugPlayerPos;
     public float debugTime;                                     // デバッグ用時間経過をカウントする
+    
+    
     // Start is called before the first frame update
     void Start()
     {
+        playerPos = GameManager.Instance.playerTransform;
+        debugPlayerPos = playerPos.position;
         // ボスオブジェクトの円周を求める
         bossRadius = bossObjTrans.localScale.x * Mathf.PI;
         // 初期化メソッド
@@ -59,24 +64,21 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         // オブジェクトプールの初期化
         planetPool = new PlanetPool(hierarchyTrans,planetPrefab[0]);
 
-        // 2秒ごとに実行
+        // 指定したフレームごとに実行
         Observable.IntervalFrame(planetSpawnInterval)
-            .Do(_ => Debug.Log("PlanetCreate")).Subscribe(_ =>
+            .Where(_ => count < planetMaxnum).Subscribe(_ =>
             {
-                if(count < planetMaxnum)
+                if (count < hotSpotMax)
                 {
-                    if (count < hotSpotMax)
-                    {
-                        // 惑星は一定値になるまでボス周辺エリアにスポーンする
-                        HotSpotCreate();
-                        Debug.Log("HotSpotSpawn");
-                    }
-                    else
-                    {
-                        // 一定値を超えると最大スポーン数まですべての範囲でスポーンする
-                        PlanetCreate();
-                        Debug.Log("NormalSpawn");
-                    }
+                    // 惑星は一定値になるまでボス周辺エリアにスポーンする
+                    HotSpotCreate();
+                    Debug.Log("HotSpotSpawn");
+                }
+                else
+                {
+                    // 一定値を超えると最大スポーン数まですべての範囲でスポーンする
+                    PlanetCreate();
+                    Debug.Log("NormalSpawn");
                 }
             }).AddTo(this.gameObject);
 
@@ -93,12 +95,19 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     // 通常スポーン用
     void PlanetCreate()
     {
-        if (count == planetMaxnum) return; // 30回生成されたらこのメソッドは起動しない
+        if (count == planetMaxnum ) return; // 30回生成されたらこのメソッドは起動しない
         planetObjNum = Random.Range(0, planetPrefab.Length); // 生成したい惑星を取得
 
         spawnPos.x = Random.Range(-stageSize, stageSize); // 生成座標の設定
         spawnPos.y = 0.0f;
         spawnPos.z = Random.Range(-stageSize, stageSize);
+
+        // スポーン予定座標とプレイヤーとの距離を計算
+        float distance = Vector3.Distance(spawnPos, playerPos.position);
+        Debug.Log("プレイヤーとの距離" + distance);
+
+        // スポーン予定座標とプレイヤーとの距離が近ければスポーンしない
+        if (distance <= 30.0f) return;
 
         // オブジェクトプールに追加
         var planet = planetPool.Rent();
@@ -126,6 +135,16 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         spawnPos.y = planetSpawnHeight;
         spawnPos.z = Random.Range(-hotSpotRadiusMax, hotSpotRadiusMax);
 
+        // プレイヤーとの距離を計算
+        float distance = Vector3.Distance(spawnPos, playerPos.position);
+        Debug.Log("プレイヤーとの距離" + distance);
+
+        // スポーン予定座標とプレイヤーとの距離が近ければスポーンしない
+        if (distance <= 30.0f) {
+            Debug.Log("プレイヤーが近くにいるため、スポーン範囲外");
+            return;
+        };
+
         xAbs = Mathf.Abs(Mathf.Pow(spawnPos.x, 2));
         zAbs = Mathf.Abs(Mathf.Pow(spawnPos.z, 2));
         // 惑星をスポーンする前にスポーンしたい惑星の大きさと同じ球型Rayを飛ばす
@@ -147,6 +166,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 // 惑星スポーン、数をカウント
                 count++;
                 planet.PlanetSpawn(spawnPos + bossObjTrans.position,planetScales[scaleRandom]);
+                
                 // 消滅時、オブジェクトをプールに返す
                 planet.OnDisableAsObservable().Subscribe(_ =>
                 {
