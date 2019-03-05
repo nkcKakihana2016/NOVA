@@ -35,7 +35,7 @@ public class EnemyController : _StarParam
     {
         base.Awake();
 
-        moveSpeed = UnityEngine.Random.Range(5.0f, 20.0f);
+        moveSpeed = UnityEngine.Random.Range(5.0f, 15.0f);
     }
 
     void Start()

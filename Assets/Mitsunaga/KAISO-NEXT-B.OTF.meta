@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: feb7c66c67f83db4c885f25460ce44dc
+guid: 4b8b29c784b394443a5c4d39c06a500e
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,9 +8,9 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Heainz
+  fontName: Kaiso
   fontNames:
-  - Heainz
+  - Kaiso
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
