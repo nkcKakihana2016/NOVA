@@ -119,7 +119,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         {
             planet.Stop();
             planetPool.Return(planet);
-        }).AddTo(planet);
+        }).AddTo(planet.gameObject);
     }
     // ボス周辺エリア専用スポーン
     private void HotSpotCreate()

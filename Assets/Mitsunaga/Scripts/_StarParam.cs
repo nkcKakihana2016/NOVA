@@ -36,7 +36,7 @@ public class _StarParam : MonoBehaviour
         .AddTo(gameObject);
 
         // 初期設定
-        InitMaterial();
+        // InitMaterial();
         
         // Rigidbodyを取得して、Y軸の移動を停止させる
         starRig = GetComponent<Rigidbody>();

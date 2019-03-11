@@ -84,7 +84,7 @@ Material:
     - _Snow: 2
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _Threshold: 0.27
+    - _Threshold: 0.65
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:

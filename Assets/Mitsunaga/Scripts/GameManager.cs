@@ -21,14 +21,13 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
         StageSelect,    // ステージセレクト画面
         Main,           // メインゲーム画面
     }
-    GameState gameState;        // 現在のステート
+    public GameState gameState;        // 現在のステート
     GameState nextGameState;    // デバッグ用　次のステート
 
     [SerializeField, Header("シーン遷移")]
     FadeSystem fadeSystem;
     [SerializeField]
     float fadeTime;
-
 
     [Header("ここから下は確認用")]
     // プレイヤーの情報
@@ -50,6 +49,7 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
         DontDestroyOnLoad(this.gameObject);
 
         // ステートが変更されたとき、それに応じた処理を実行する
+        // デバッグ中はシーンの切り替えを停止
         if (!isDebug)
         {
             this.ObserveEveryValueChanged(c => c.gameState)
@@ -94,20 +94,22 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     {
         isPause.Value = true;
         IObservable<bool> obsOut = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeOutCoroutine(observer, fadeTime));
-        obsOut.Subscribe(onCompleted => 
+        obsOut.Subscribe(onCompleted =>
         {
             Debug.Log("FadeOut!");
             SceneManager.LoadScene(sceneNumber);
             FadeIn();
-        });
+        })
+        .AddTo(this.gameObject);
     }
     void FadeIn()
     {
         IObservable<bool> obsIn = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeInCoroutine(observer, fadeTime));
-        obsIn.Subscribe(onCompleted => 
+        obsIn.Subscribe(onCompleted =>
         {
             Debug.Log("FadeIn!");
             isPause.Value = false;
-        });
+        })
+        .AddTo(this.gameObject);
     }
 }

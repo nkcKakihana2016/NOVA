@@ -33,52 +33,22 @@ public class EnemyController : _StarParam
 
     new void Awake()
     {
+        // baseクラスのAwake()を実行する
         base.Awake();
-
-        moveSpeed = UnityEngine.Random.Range(5.0f, 15.0f);
     }
 
     void Start()
     {
+        // 星をアクティブにする
         this.gameObject.SetActive(true);
 
+        // 移動速度をランダムに取得する
+        moveSpeed = UnityEngine.Random.Range(5.0f, 15.0f);
+        // AIナンバーをランダムに取得する
         AInum = UnityEngine.Random.Range(0, 3);
 
-        // AIを起動
-        Observable.FromCoroutine<string>(observer => AICoroutine(observer, AInum))
-            .Subscribe(i => Debug.Log("EnemyAI : " + i.ToString()));
-
-        this.FixedUpdateAsObservable()
-            .Where(_ => !GameManager.Instance.isPause.Value)
-            .Where(_ => starID != 2)
-            .Subscribe(_ =>
-            {
-
-
-                // マウスカーソルの影響を受ける(プレイヤーよりも少ない)
-                if (Vector3.Distance(this.transform.position, GameManager.Instance.cursorPosition) 
-                    <= cursorSpace + (this.transform.localScale.x / 2))
-                {
-                    // マウスカーソルへの方向を取得
-                    Vector3 cursorDir = (GameManager.Instance.cursorPosition - this.transform.position).normalized;
-                    starRig.AddForce(cursorSpeedMul * ((cursorDir * cursorSpeed) - starRig.velocity));
-                }
-
-            }).AddTo(this.gameObject);
-
-        // 当たり判定
-        this.OnCollisionEnterAsObservable()
-            .Subscribe(c =>
-            {
-                ParticleSystem ps = Instantiate(enemyPS);
-                ps.transform.position = this.transform.position;
-
-            }).AddTo(this.gameObject);
-    }
-
-    IEnumerator AICoroutine(IObserver<string> observer ,int AInumber)
-    {
-        switch (AInumber)
+        // 簡単なAIの挙動(プレイヤーの方向を向くか、ランダムな方向を向くか)
+        switch (AInum)
         {
             case 0: // ランダム方向にまっすぐ進む
                 moveDir.x = UnityEngine.Random.Range(-1.0f, 1.0f);
@@ -95,30 +65,53 @@ public class EnemyController : _StarParam
                 break;
         }
 
-        observer.OnNext("AI Number : " + AInumber.ToString() + "   Speed : " + moveSpeed.ToString());
-
-        while (this.gameObject.activeInHierarchy && starID != 2)
-        {
-            Vector3 playerPos = GameManager.Instance.playerTransform.position;
-
-            // プレイヤーが近くにいれば移動を実行、いなければ停止
-            if (Vector3.Distance(this.transform.position, playerPos) <= moveSpace && !GameManager.Instance.isPause.Value)
+        this.FixedUpdateAsObservable()
+            .Where(_ => !GameManager.Instance.isPause.Value)
+            .Where(_ => starID != 2)
+            .Subscribe(_ =>
             {
+                // プレイヤーのポジションを取得
+                Vector3 playerPos = GameManager.Instance.playerTransform.position;
 
-                if (isLookPlayer)
+                // プレイヤーが近くにいれば移動を実行、いなければ停止
+                if (Vector3.Distance(this.transform.position, playerPos) <= moveSpace && !GameManager.Instance.isPause.Value)
                 {
-                    moveDir = (playerPos - this.transform.position).normalized;
+                    // プレイヤーの方向を向くか
+                    if (isLookPlayer)
+                    {
+                        moveDir = (playerPos - this.transform.position).normalized;
+                    }
+
+                    // 速度と方向を計算して、力を加える
+                    starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
+                }
+                else
+                {
+                    starRig.velocity = Vector3.zero;
                 }
 
-                starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
-            }
-            else
-            {
-                starRig.velocity = Vector3.zero;
-            }
+                // マウスカーソルの影響を受ける(プレイヤーよりも少ない)
+                if (Vector3.Distance(this.transform.position, GameManager.Instance.cursorPosition) 
+                    <= cursorSpace + (this.transform.localScale.x / 2))
+                {
+                    // マウスカーソルへの方向を取得
+                    Vector3 cursorDir = (GameManager.Instance.cursorPosition - this.transform.position).normalized;
+                    // マウスカーソルの引力と斥力を判断して、力を加える
+                    starRig.AddForce(cursorSpeedMul * ((cursorDir *(
+                        (GameManager.Instance.cursorFlg) ? cursorSpeed : -cursorSpeed
+                        )) - starRig.velocity));
+                }
 
-            yield return null;
-        }
+            }).AddTo(this.gameObject);
+
+        // 当たり判定
+        this.OnCollisionEnterAsObservable()
+            .Subscribe(c =>
+            {
+                ParticleSystem ps = Instantiate(enemyPS);
+                ps.transform.position = this.transform.position;
+
+            }).AddTo(this.gameObject);
     }
 
     // 惑星スポーンの座標設定
@@ -147,6 +140,13 @@ public class EnemyController : _StarParam
     // 消滅情報をスポーンクラスに送る
     public void Stop()
     {
-        PlanetSpawner.Instance.PlanetDestroy();
+        try
+        {
+            PlanetSpawner.Instance.PlanetDestroy();
+        }
+        catch
+        {
+            Debug.LogWarning("EnemyController Stop Error");
+        }
     }
 }

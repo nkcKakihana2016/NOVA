@@ -25,7 +25,7 @@ public class PlayerController : _StarParam
 
     // 衝突関連
     [SerializeField, Header("星の衝突時、合体時の待ち時間、衝突時のパーティクル")]
-    int hitStopCount = 10;
+    float hitStopTime = 0.1f;
     [SerializeField]
     float waitCount = 4.5f;
     [SerializeField]
@@ -172,7 +172,7 @@ public class PlayerController : _StarParam
         float size = transform.localScale.x;    // プレイヤーのサイズを保存する
 
         // ヒットストップを最初に起動する
-        StartCoroutine(HitStopCoroutine(hitStopCount));
+        StartCoroutine(HitStopCoroutine(hitStopTime));
 
         // プレイヤーを停止、星のサイズを0に
         starRig.isKinematic = true;
@@ -205,15 +205,15 @@ public class PlayerController : _StarParam
     // 衝突時のヒットストップを管理するコルーチン
     // コライダーの判定を取ったときに、一瞬スローになる演出
     // stopFrame
-    IEnumerator HitStopCoroutine(int stopFrame)
+    IEnumerator HitStopCoroutine(float stopTime)
     {
-        int count = 0;
+        float count = 0.0f;
 
         Time.timeScale = 0.05f;
 
-        while (count < stopFrame)
+        while (count < stopTime)
         {
-            count++;
+            count += Time.unscaledDeltaTime;
 
             yield return null;
         }

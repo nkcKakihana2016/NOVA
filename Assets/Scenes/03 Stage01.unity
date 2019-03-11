@@ -334,7 +334,7 @@ MonoBehaviour:
   holes:
   - {fileID: 391554231}
   - {fileID: 440714817}
-  hitStopCount: 10
+  hitStopTime: 0.1
   waitCount: 4.5
   hitPS:
   - {fileID: 1531329362}
@@ -672,6 +672,8 @@ MonoBehaviour:
   maxR: 0
   minR: 0
   spawnPos: {x: 0, y: 0, z: 0}
+  playerPos: {fileID: 0}
+  debugPlayerPos: {x: 0, y: 0, z: 0}
   debugTime: 0
 --- !u!4 &968193714
 Transform:
@@ -1000,7 +1002,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: eb1b0e13b7200a94da6316493519bde8, type: 2}
+  - {fileID: 2100000, guid: af68dcf0535a6db4a83d66e340569428, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -150,7 +150,7 @@ MonoBehaviour:
   isDebug: 0
   bigText: {fileID: 932507067}
   fadeSystem: {fileID: 581322494}
-  fadeTime: 1
+  fadeTime: 0.5
   playerTransform: {fileID: 0}
   cursorPosition: {x: 0, y: 0, z: 0}
   cursorFlg: 0
