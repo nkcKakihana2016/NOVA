@@ -7,13 +7,10 @@ using UniRx.Triggers;
 
 public class TitleManager : MonoBehaviour
 {
-    void Start()
-    {
-        
-    }
     // スタート画面でのボタン
     public void OnTitleButtonClicked()
     {
+        GetComponent<AudioSource>().Play();
         GameManager.Instance.NextState(GameManager.GameState.StageSelect);
     }
 }

@@ -36,6 +36,9 @@ public class PlayerController : _StarParam
     CinemachineVirtualCamera vcam;
     const float CDISTANCE = 100.0f; // カメラの引き
 
+    // 音楽関連
+    AudioSource collisionAudioSource;
+
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
     const float MOVEDISTANCE = 20.0f;   // マウスの反応する距離　これ+星の直径
 
@@ -45,6 +48,7 @@ public class PlayerController : _StarParam
 
         // プレイヤー情報
         GameManager.Instance.playerTransform = this.gameObject.transform;
+        collisionAudioSource = GetComponent<AudioSource>();
 
         holeFlg = true;
         holes[1].SetActive(false);
@@ -93,6 +97,8 @@ public class PlayerController : _StarParam
             .Where(x => x.gameObject.GetComponent<_StarParam>().starID != 1)
             .Subscribe(c =>
             {
+                collisionAudioSource.Play();
+
                 foreach(ParticleSystem ps in hitPS)
                 {
                     ps.Play();
@@ -102,19 +108,33 @@ public class PlayerController : _StarParam
                 if(c.transform.localScale.x <= (transform.localScale.x / 5))
                 {
                     // 1. 自分よりも圧倒的に小さければそのまま吸収
-
-                    SetStarSize(c.transform.localScale.x / 2);
-                    SetCamera();
-                    c.gameObject.SetActive(false);
+                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                    {
+                        GameManager.Instance.isClear.Value = true;
+                    }
+                    else
+                    {
+                        SetStarSize(c.transform.localScale.x / 2);
+                        SetCamera();
+                        c.gameObject.SetActive(false);
+                    }
                 }
                 else if (c.transform.localScale.x <= transform.localScale.x)
                 {
                     // 2. 自分と同じくらいならばお互いを破壊して合体
 
-                    // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
-                    // コルーチンの終了時にカメラの修正を行う
-                    Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount,c.transform.localScale.x/2))
-                    .Subscribe(t => Debug.Log(t));
+                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                    {
+                        GameManager.Instance.isClear.Value = true;
+                    }
+                    else
+                    {
+                        // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
+                        // コルーチンの終了時にカメラの修正を行う
+                        Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount, c.transform.localScale.x / 2))
+                        .Subscribe(t => Debug.Log(t));
+                    }
+                    
 
                     c.gameObject.SetActive(false);
 
@@ -125,11 +145,6 @@ public class PlayerController : _StarParam
 
                     GameManager.Instance.isGameOver.Value = true;
                     this.gameObject.SetActive(false);
-                }
-
-                if(c.gameObject.GetComponent<_StarParam>().starID == 2)
-                {
-                    GameManager.Instance.isClear.Value = true;
                 }
             });
     }

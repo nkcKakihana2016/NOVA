@@ -10,10 +10,12 @@ public class StageSelectManager : MonoBehaviour
     // 後から、ぶつかったときの判定で移動するようにしようかな
     public void OnStageSelectButtonClicked()
     {
+        GetComponent<AudioSource>().Play();
         GameManager.Instance.NextState(GameManager.GameState.Main);
     }
     public void OnTitleButtonClicked()
     {
+        GetComponent<AudioSource>().Play();
         GameManager.Instance.NextState(GameManager.GameState.Title);
     }
 }
