@@ -81,7 +81,7 @@ Material:
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
-    - _Threshold: -182.66864
+    - _Threshold: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

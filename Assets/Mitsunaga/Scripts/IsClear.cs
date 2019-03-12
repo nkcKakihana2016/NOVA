@@ -7,7 +7,7 @@ using UniRx.Triggers;
 
 public class IsClear : MonoBehaviour
 {
-    float waitTime = 2.0f;
+    float waitTime = 5.0f;
 
     void Start()
     {

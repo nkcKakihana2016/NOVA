@@ -43,7 +43,7 @@ public class EnemyController : _StarParam
         this.gameObject.SetActive(true);
 
         // 移動速度をランダムに取得する
-        moveSpeed = UnityEngine.Random.Range(5.0f, 15.0f);
+        moveSpeed = UnityEngine.Random.Range(3.0f, 10.0f);
         // AIナンバーをランダムに取得する
         AInum = UnityEngine.Random.Range(0, 3);
 
@@ -108,6 +108,12 @@ public class EnemyController : _StarParam
         this.OnCollisionEnterAsObservable()
             .Subscribe(c =>
             {
+                if(c.gameObject.GetComponent<_StarParam>().starID == 3 &&
+                    transform.localScale.x < c.transform.localScale.x)
+                {
+                    // Destroy(this.gameObject);
+                }
+
                 ParticleSystem ps = Instantiate(enemyPS);
                 ps.transform.position = this.transform.position;
 
@@ -127,16 +133,6 @@ public class EnemyController : _StarParam
         SetStarSize(scale);
     }
 
-    // 惑星スポーンの設定（オーバーロード、AIの番号を追加）
-    public void PlanetSpawn(Vector3 pos, float scale, int AInumber)
-    {
-        transform.position = pos;
-        SetStarSize(scale);
-
-        // AIのナンバーを適用する
-        AInum = AInumber;
-    }
-
     // 消滅情報をスポーンクラスに送る
     public void Stop()
     {
@@ -146,7 +142,7 @@ public class EnemyController : _StarParam
         }
         catch
         {
-            Debug.LogWarning("EnemyController Stop Error");
+
         }
     }
 }

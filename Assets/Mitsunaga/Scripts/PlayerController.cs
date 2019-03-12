@@ -9,6 +9,10 @@ using Cinemachine;
 public class PlayerController : _StarParam
 {
     // プレイヤーとカメラのコントロールを行う
+    [SerializeField, Header("ボスのトランスフォーム,ラインレンダラー")]
+    Transform bossTransform;
+    [SerializeField]
+    LineRenderer linePtB;
 
     // 星の移動関連
     [SerializeField, Header("星の加速度、加速度への追従度、反応距離")]
@@ -59,6 +63,11 @@ public class PlayerController : _StarParam
 
     void Start()
     {
+        // 線の幅
+        linePtB.SetWidth(0.1f, 0.1f);
+        // 頂点の数
+        linePtB.SetVertexCount(2);
+
         // 毎フレーム呼び出される
         this.FixedUpdateAsObservable()
             .Where(c => !GameManager.Instance.isPause.Value)
@@ -90,6 +99,11 @@ public class PlayerController : _StarParam
 
             // マウスカーソル・移動処理
                 MoveCursor();
+
+                // ボスとの間に線を引く
+                linePtB.SetPosition(0, transform.position);
+                linePtB.SetPosition(1, bossTransform.position);
+
             });
 
         // 当たり判定
@@ -98,11 +112,6 @@ public class PlayerController : _StarParam
             .Subscribe(c =>
             {
                 collisionAudioSource.Play();
-
-                foreach(ParticleSystem ps in hitPS)
-                {
-                    ps.Play();
-                }
 
                 // 当たった星のサイズが
                 if(c.transform.localScale.x <= (transform.localScale.x / 5))
@@ -119,9 +128,13 @@ public class PlayerController : _StarParam
                         c.gameObject.SetActive(false);
                     }
                 }
-                else if (c.transform.localScale.x <= transform.localScale.x)
+                else if (c.transform.localScale.x <= transform.localScale.x * 1.1f)
                 {
                     // 2. 自分と同じくらいならばお互いを破壊して合体
+                    foreach (ParticleSystem ps in hitPS)
+                    {
+                        ps.Play();
+                    }
 
                     if (c.gameObject.GetComponent<_StarParam>().starID == 2)
                     {
@@ -134,10 +147,7 @@ public class PlayerController : _StarParam
                         Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount, c.transform.localScale.x / 2))
                         .Subscribe(t => Debug.Log(t));
                     }
-                    
-
                     c.gameObject.SetActive(false);
-
                 }
                 else
                 {
