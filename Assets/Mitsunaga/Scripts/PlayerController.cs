@@ -121,6 +121,7 @@ public class PlayerController : _StarParam
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
+            .Where(c => c.gameObject.GetComponent<_StarParam>().starID != 1)
             .Subscribe(c =>
             {
                 collisionAudioSource.Play();    // 衝突の音を出す
@@ -159,8 +160,9 @@ public class PlayerController : _StarParam
                     }
                     else
                     {
+                        Debug.Log("ここ！！！！！");
                         // ぶつかったら、砕けて待ち時間のカウントを進める
-                        WaitCoroutine(waitCount, c.transform.localScale.x / 2);
+                        StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
                     }
 
                     // 相手のオブジェクトを非表示にする
@@ -249,7 +251,7 @@ public class PlayerController : _StarParam
     {
         float count = 0.0f;
 
-        Time.timeScale = 0.05f;
+        Time.timeScale = 0.02f;
 
         while (count < stopTime)
         {
