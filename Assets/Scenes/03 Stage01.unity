@@ -510,7 +510,7 @@ MonoBehaviour:
   holes:
   - {fileID: 391554231}
   - {fileID: 440714817}
-  hitStopTime: 0.5
+  hitStopTime: 0.3
   waitCount: 4.5
   hitPS:
   - {fileID: 1531329362}

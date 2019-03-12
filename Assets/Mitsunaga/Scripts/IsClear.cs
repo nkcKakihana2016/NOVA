@@ -40,6 +40,6 @@ public class IsClear : MonoBehaviour
         }
 
         GameManager.Instance.bigText.text = "";
-        GameManager.Instance.NextState(GameManager.GameState.Title);
+        GameManager.Instance.NextState(GameManager.GameState.StageSelect);
     }
 }

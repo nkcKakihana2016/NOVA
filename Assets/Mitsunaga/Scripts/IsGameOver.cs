@@ -7,7 +7,7 @@ using UniRx.Triggers;
 
 public class IsGameOver : MonoBehaviour
 {
-    float waitTime = 5.0f;
+    float waitTime = 2.0f;
 
     void Start()
     {
@@ -39,6 +39,6 @@ public class IsGameOver : MonoBehaviour
             yield return null;
         }
         GameManager.Instance.bigText.text = "";
-        GameManager.Instance.NextState(GameManager.GameState.Title);
+        GameManager.Instance.NextState(GameManager.GameState.StageSelect);
     }
 }

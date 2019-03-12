@@ -251,7 +251,7 @@ public class PlayerController : _StarParam
     {
         float count = 0.0f;
 
-        Time.timeScale = 0.02f;
+        Time.timeScale = 0.03f;
 
         while (count < stopTime)
         {
