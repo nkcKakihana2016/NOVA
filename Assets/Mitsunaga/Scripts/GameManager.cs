@@ -103,7 +103,6 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     }
     void FadeIn()
     {
-        StartCoroutine(
-        fadeSystem.FadeInCoroutine(fadeTime));
+        StartCoroutine(fadeSystem.FadeInCoroutine(fadeTime));
     }
 }

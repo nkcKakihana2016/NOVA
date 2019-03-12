@@ -29,7 +29,7 @@ public class PlayerController : _StarParam
 
     // 衝突関連
     [SerializeField, Header("星の衝突時、合体時の待ち時間、衝突時のパーティクル")]
-    float hitStopTime = 0.1f;
+    float hitStopTime = 0.2f;
     [SerializeField]
     float waitCount = 4.5f;
     [SerializeField]
@@ -63,22 +63,25 @@ public class PlayerController : _StarParam
 
     void Start()
     {
-        // 線の幅
-        linePtB.SetWidth(0.1f, 0.1f);
-        // 頂点の数
-        linePtB.SetVertexCount(2);
+        // ラインレンダラーの情報を指定
+        linePtB.startWidth = 0.1f;  // 開始点の幅
+        linePtB.endWidth = 0.1f;    // 終点の幅
+        linePtB.positionCount = 2;  // 頂点の数
 
+        // クリックでポーズを解除する
         this.UpdateAsObservable()
             .Where(c => GameManager.Instance.isPause.Value)
+            .Where(c => !GameManager.Instance.isGameOver.Value)
+            .Where(c => !GameManager.Instance.isClear.Value)
             .Where(c => Input.GetMouseButtonDown(0))
             .Subscribe(_ =>
             {
-
                 GameManager.Instance.isPause.Value = false;
-            }).AddTo(this.gameObject);
+            })
+            .AddTo(this.gameObject);
 
         // 毎フレーム呼び出される
-        this.FixedUpdateAsObservable()
+        this.UpdateAsObservable()
             .Where(c => !GameManager.Instance.isPause.Value)
             .Subscribe(_ => 
             {
@@ -88,6 +91,7 @@ public class PlayerController : _StarParam
             // マウスのクリック処理
                 if (Input.GetMouseButtonDown(0))
                 {
+                    // 移動速度を反転させる
                     moveSpeed = -moveSpeed;
 
                     if (holeFlg)
@@ -109,23 +113,24 @@ public class PlayerController : _StarParam
             // マウスカーソル・移動処理
                 MoveCursor();
 
-                // ボスとの間に線を引く
-                linePtB.SetPosition(0, transform.position);
-                linePtB.SetPosition(1, bossTransform.position);
+            // ボスとの間に線を引く
+                linePtB.SetPosition(0, transform.position);     // 開始点の座標
+                linePtB.SetPosition(1, bossTransform.position); // 終点の座標
 
             });
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
-            .Where(x => x.gameObject.GetComponent<_StarParam>().starID != 1)
             .Subscribe(c =>
             {
-                collisionAudioSource.Play();
+                collisionAudioSource.Play();    // 衝突の音を出す
 
                 // 当たった星のサイズが
-                if(c.transform.localScale.x <= (transform.localScale.x / 5))
+                if(c.transform.localScale.x <= (transform.localScale.x / 3))
                 {
                     // 1. 自分よりも圧倒的に小さければそのまま吸収
+
+                    // ボスを倒すとクリア
                     if (c.gameObject.GetComponent<_StarParam>().starID == 2)
                     {
                         GameManager.Instance.isClear.Value = true;
@@ -137,30 +142,33 @@ public class PlayerController : _StarParam
                         c.gameObject.SetActive(false);
                     }
                 }
-                else if (c.transform.localScale.x <= transform.localScale.x * 1.1f)
+                else if (c.transform.localScale.x <= (transform.localScale.x * 1.1f))
                 {
                     // 2. 自分と同じくらいならばお互いを破壊して合体
+
+                    // パーティクル再生
                     foreach (ParticleSystem ps in hitPS)
                     {
                         ps.Play();
                     }
 
+                    // ボスを倒すとクリア
                     if (c.gameObject.GetComponent<_StarParam>().starID == 2)
                     {
                         GameManager.Instance.isClear.Value = true;
                     }
                     else
                     {
-                        // コルーチンを回し、observer<>で戻り値を受け取ってSubscribe()に流す
-                        // コルーチンの終了時にカメラの修正を行う
-                        Observable.FromCoroutine<float>(observer => WaitCoroutine(observer, waitCount, c.transform.localScale.x / 2))
-                        .Subscribe(t => Debug.Log(t));
+                        // ぶつかったら、砕けて待ち時間のカウントを進める
+                        WaitCoroutine(waitCount, c.transform.localScale.x / 2);
                     }
+
+                    // 相手のオブジェクトを非表示にする
                     c.gameObject.SetActive(false);
                 }
                 else
                 {
-                    // 3. 自分より大きければ自分が破壊される
+                    // 3. 自分より大きければ自分が破壊される　ゲームオーバー
 
                     GameManager.Instance.isGameOver.Value = true;
                     this.gameObject.SetActive(false);
@@ -171,11 +179,13 @@ public class PlayerController : _StarParam
     // マウスカーソル・移動処理
     void MoveCursor()
     {
-        Vector3 mouseScreen = Input.mousePosition;                      // マウスカーソルの座標を取得
-        mouseScreen.z = CDISTANCE;                                      // 奥行を指定
-        Vector3 cursorPos = Camera.main.ScreenToWorldPoint(mouseScreen); // スクリーン座標系からワールド座標系に変換
-        cursorParent.transform.position = cursorPos;                     // マウスカーソルの座標にオブジェクトを同期
+        // マウスカーソルの座標を取得
+        Vector3 mouseScreen = Input.mousePosition;
+        mouseScreen.z = CDISTANCE;
+        Vector3 cursorPos = Camera.main.ScreenToWorldPoint(mouseScreen);
+        cursorParent.transform.position = cursorPos;
 
+        // ゲームマネージャーに情報を渡す
         GameManager.Instance.cursorPosition = cursorPos;
         GameManager.Instance.cursorFlg = holeFlg;
 
@@ -187,8 +197,8 @@ public class PlayerController : _StarParam
     void SetCamera()
     {
         // カメラ初期位置と星の半径を足した距離分、カメラを離す
-        float cPos = CDISTANCE + (transform.localScale.x / 2);
-        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y = cPos;
+        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y 
+            = CDISTANCE + (transform.localScale.x / 1.8f);
     }
 
     // 衝突後の待ち時間を管理するコルーチン
@@ -196,7 +206,7 @@ public class PlayerController : _StarParam
     // observer  : 値を返すもの(ググってくれ)
     // waitCount : 待ち時間(単位：秒)
     // nextSize  : 待ち時間が終わった後に大きくする星のサイズ
-    IEnumerator WaitCoroutine(System.IObserver<float> observer,float waitCount,float nextSize)
+    IEnumerator WaitCoroutine(float waitCount,float nextSize)
     {
         
         float count = 0.0f;                     // 待ち時間を計測する変数
@@ -211,8 +221,7 @@ public class PlayerController : _StarParam
 
         while (count < waitCount - 0.5f)
         {
-            
-            observer.OnNext(count += Time.deltaTime);
+            count += Time.deltaTime;
 
             yield return null;
         }
@@ -223,7 +232,7 @@ public class PlayerController : _StarParam
         while (count < waitCount)
         {
             // 待ち時間のカウントを進め、デバッグ用の値を渡す
-            observer.OnNext(count += Time.deltaTime);
+            count += Time.deltaTime;
 
             yield return null;
         }

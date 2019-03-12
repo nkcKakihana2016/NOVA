@@ -14,9 +14,9 @@ public class _StarParam : MonoBehaviour
     [SerializeField, Header("星の初期サイズ")]
     FloatReactiveProperty starSize = new FloatReactiveProperty(0.0f);
 
-    [SerializeField,Header("マテリアル初期化用パラメータ")]
-    MatTable matTable;          // 適用するマテリアルテーブル
-    Material starMat;           // 星のマテリアル
+    //[SerializeField,Header("マテリアル初期化用パラメータ")]
+    //MatTable matTable;          // 適用するマテリアルテーブル
+    //Material starMat;           // 星のマテリアル
 
     IEnumerator routine;        // 星のサイズコルーチンの管理
     float nextSize = 1.0f;      // 目標の星のサイズ
@@ -69,6 +69,7 @@ public class _StarParam : MonoBehaviour
         starSize.Value = size;
     }
 
+    /*
     public void InitMaterial()
     {
         // マテリアルのいろいろな初期化
@@ -80,4 +81,5 @@ public class _StarParam : MonoBehaviour
         starMat.SetTexture  ("_MaskTex", matTable.mask);
         starMat.SetColor    ("_RimColor", matTable.rimLight);
     }
+    */
 }

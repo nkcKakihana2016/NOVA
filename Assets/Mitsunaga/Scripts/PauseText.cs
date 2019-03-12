@@ -11,7 +11,9 @@ public class PauseText : MonoBehaviour
         GameManager.Instance.isPause
             .Subscribe(pause =>
             {
-                if (pause)
+                if (pause &&
+                !GameManager.Instance.isGameOver.Value &&
+                !GameManager.Instance.isClear.Value)
                 {
                     this.gameObject.SetActive(true);
                 }

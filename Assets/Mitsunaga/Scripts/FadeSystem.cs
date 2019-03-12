@@ -62,12 +62,15 @@ public class FadeSystem : MonoBehaviour
     //  フェードイン<消滅>
     public IEnumerator FadeInCoroutine(float time)
     {
-        float endTime = Time.timeSinceLevelLoad + time * (1 - cutoutRange.Value);
+        float endTime = time * (1.0f - cutoutRange.Value);
+        float thisTime = 0.0f;
 
-        while (Time.timeSinceLevelLoad <= endTime)
+        while (thisTime <= endTime)
         {
+            thisTime += Time.deltaTime;
+
             // しきい値を変更し、フレーム終了を待つ
-            cutoutRange.Value = 1.0f - ((endTime - Time.timeSinceLevelLoad) / time);
+            cutoutRange.Value = 1.0f - ((endTime - thisTime) / time);
             yield return null;
         }
         cutoutRange.Value = 1.0f;

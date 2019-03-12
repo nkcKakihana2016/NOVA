@@ -13,25 +13,23 @@ public class SphereRot : MonoBehaviour
     Material mat;
     bool tFlg;
 
-	void Start ()
+    float t;
+
+
+    void Start ()
     {
         if (isSphere)
         {
             mat = GetComponent<Renderer>().material;
-            StartCoroutine(matCor());
+            t = mat.GetFloat("_Threshold");
         }
 	}
 
-	void FixedUpdate ()
+	void Update ()
     {
         transform.eulerAngles += new Vector3(0.0f, rotationSpeed * Time.deltaTime, 0.0f);
-    }
 
-    IEnumerator matCor()
-    {
-        float t = mat.GetFloat("_Threshold");
-
-        while (true)
+        if (isSphere)
         {
             if (t <= 0.1f)
             {
@@ -46,8 +44,6 @@ public class SphereRot : MonoBehaviour
 
             t += (tFlg) ? 0.01f : -0.01f;
             mat.SetFloat("_Threshold", t);
-
-            yield return null;
         }
     }
 }

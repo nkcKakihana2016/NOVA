@@ -502,7 +502,6 @@ MonoBehaviour:
   starID: 1
   starSize:
     value: 2
-  matTable: {fileID: 11400000, guid: 96b6a0c9446801d499c9e1c5f614c9cf, type: 2}
   bossTransform: {fileID: 1768393975}
   linePtB: {fileID: 2098827930}
   moveSpeed: 30
@@ -511,7 +510,7 @@ MonoBehaviour:
   holes:
   - {fileID: 391554231}
   - {fileID: 440714817}
-  hitStopTime: 0.1
+  hitStopTime: 0.2
   waitCount: 4.5
   hitPS:
   - {fileID: 1531329362}
@@ -668,7 +667,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: a90cc6d0b0f50174ab8a1fe26d4218e5, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.7
+  m_Volume: 0.6
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -1009,9 +1008,14 @@ MonoBehaviour:
   - {fileID: 6620282836372197336, guid: 57882f76ef8e0824e82ae3d1800606bb, type: 3}
   hierarchyTrans: {fileID: 1581745096}
   planetScales:
+  - 1
   - 2
+  - 3
   - 4
+  - 5
   - 8
+  - 10
+  - 12
   - 16
   count: 0
   planetObjNum: 0
@@ -5761,7 +5765,7 @@ PrefabInstance:
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
@@ -5771,7 +5775,7 @@ PrefabInstance:
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -50
+      value: -65
       objectReference: {fileID: 0}
     - target: {fileID: 5975556232110573367, guid: d7f32cc1d5c77ff4da0a3d891025f599,
         type: 3}
@@ -6116,7 +6120,6 @@ MonoBehaviour:
   starID: 2
   starSize:
     value: 50
-  matTable: {fileID: 11400000, guid: fe4058bd2348a7740a5ca42f53f1b4f8, type: 2}
   spawner: {fileID: 968193713}
   enemyPS: {fileID: 7970975209574642911, guid: c8db0ae0e04693d41a9dcc92f7684285, type: 3}
   AInum: 0
