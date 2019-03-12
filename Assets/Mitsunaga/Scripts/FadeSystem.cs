@@ -31,8 +31,7 @@ public class FadeSystem : MonoBehaviour
         {
             // アルファ値をマテリアルに適用する
             uiMask.SetFloat("_Threshold", c);
-            // テクスチャに張り付けて表示する
-            Graphics.Blit(texture, maskTexture, uiMask);
+
             // マスクを更新する
             mask.enabled = false;
             mask.enabled = true;
@@ -45,7 +44,7 @@ public class FadeSystem : MonoBehaviour
     public IEnumerator FadeOutCoroutine(System.IObserver<bool> observer, float time)
     {
         // 最初にあたり判定を出し、誤クリックを減らす
-        canvasGroup.blocksRaycasts = true;
+        // canvasGroup.blocksRaycasts = true;
 
         float endTime = Time.timeSinceLevelLoad +　time * (cutoutRange.Value);
 
@@ -61,7 +60,7 @@ public class FadeSystem : MonoBehaviour
     }
 
     //  フェードイン<消滅>
-    public IEnumerator FadeInCoroutine(System.IObserver<bool> observer, float time)
+    public IEnumerator FadeInCoroutine(float time)
     {
         float endTime = Time.timeSinceLevelLoad + time * (1 - cutoutRange.Value);
 
@@ -75,7 +74,5 @@ public class FadeSystem : MonoBehaviour
 
         // 最後にあたり判定を消す
         canvasGroup.blocksRaycasts = false;
-
-        observer.OnNext(true);
     }
 }

@@ -166,6 +166,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 // 惑星スポーン、数をカウント
                 count++;
                 planet.PlanetSpawn(spawnPos + bossObjTrans.position,planetScales[scaleRandom]);
+                Debug.Log(spawnPos + bossObjTrans.position);
                 
                 // 消滅時、オブジェクトをプールに返す
                 planet.OnDisableAsObservable().Subscribe(_ =>

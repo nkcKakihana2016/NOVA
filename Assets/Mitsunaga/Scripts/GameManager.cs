@@ -96,7 +96,6 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
         IObservable<bool> obsOut = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeOutCoroutine(observer, fadeTime));
         obsOut.Subscribe(onCompleted =>
         {
-            Debug.Log("FadeOut!");
             SceneManager.LoadScene(sceneNumber);
             FadeIn();
         })
@@ -104,12 +103,7 @@ public class GameManager : SingletonMonoBehaviourFast<GameManager>
     }
     void FadeIn()
     {
-        IObservable<bool> obsIn = Observable.FromCoroutine<bool>(observer => fadeSystem.FadeInCoroutine(observer, fadeTime));
-        obsIn.Subscribe(onCompleted =>
-        {
-            Debug.Log("FadeIn!");
-            isPause.Value = false;
-        })
-        .AddTo(this.gameObject);
+        StartCoroutine(
+        fadeSystem.FadeInCoroutine(fadeTime));
     }
 }

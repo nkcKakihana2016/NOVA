@@ -68,6 +68,15 @@ public class PlayerController : _StarParam
         // 頂点の数
         linePtB.SetVertexCount(2);
 
+        this.UpdateAsObservable()
+            .Where(c => GameManager.Instance.isPause.Value)
+            .Where(c => Input.GetMouseButtonDown(0))
+            .Subscribe(_ =>
+            {
+
+                GameManager.Instance.isPause.Value = false;
+            }).AddTo(this.gameObject);
+
         // 毎フレーム呼び出される
         this.FixedUpdateAsObservable()
             .Where(c => !GameManager.Instance.isPause.Value)
@@ -170,12 +179,9 @@ public class PlayerController : _StarParam
         GameManager.Instance.cursorPosition = cursorPos;
         GameManager.Instance.cursorFlg = holeFlg;
 
-        // 反応距離より近ければ、AddForceを適用
-        if (Vector3.Distance(cursorPos, transform.position) <= MOVEDISTANCE + transform.localScale.x)
-        {
-            Vector3 moveDir = (cursorPos - transform.position).normalized;   // マウスカーソルへの方向を取得
-            starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
-        }
+        // 力を加える
+        Vector3 moveDir = (cursorPos - transform.position).normalized;   // マウスカーソルへの方向を取得
+        starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
     }
     // カメラの処理
     void SetCamera()
