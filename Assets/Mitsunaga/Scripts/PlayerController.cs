@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
@@ -119,6 +120,12 @@ public class PlayerController : _StarParam
 
             });
 
+        Observable.Interval(TimeSpan.FromSeconds(1.0)).Subscribe(c =>
+        {
+            SetCamera();
+        })
+        .AddTo(this.gameObject);
+
         // 当たり判定
         this.OnCollisionEnterAsObservable()
             .Where(c => c.gameObject.GetComponent<_StarParam>().starID != 1)
@@ -138,7 +145,8 @@ public class PlayerController : _StarParam
                     }
                     else
                     {
-                        SetStarSize(c.transform.localScale.x / 2);
+                        // 小さい星は成長速度が遅め
+                        SetStarSize(c.transform.localScale.x / 4);
                         SetCamera();
                         c.gameObject.SetActive(false);
                     }
@@ -160,7 +168,6 @@ public class PlayerController : _StarParam
                     }
                     else
                     {
-                        Debug.Log("ここ！！！！！");
                         // ぶつかったら、砕けて待ち時間のカウントを進める
                         StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
                     }
@@ -199,8 +206,8 @@ public class PlayerController : _StarParam
     void SetCamera()
     {
         // カメラ初期位置と星の半径を足した距離分、カメラを離す
-        vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset.y 
-            = CDISTANCE + (transform.localScale.x / 1.8f);
+        vcam.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance
+            = CDISTANCE + (transform.localScale.x / 1.5f);
     }
 
     // 衝突後の待ち時間を管理するコルーチン
