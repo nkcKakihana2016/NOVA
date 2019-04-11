@@ -15,57 +15,74 @@ public class _StarParam : MonoBehaviour
     FloatReactiveProperty starSize = new FloatReactiveProperty(0.0f);
 
     //[SerializeField,Header("マテリアル初期化用パラメータ")]
-    //MatTable matTable;          // 適用するマテリアルテーブル
-    //Material starMat;           // 星のマテリアル
+    //MatTable matTable;            // 適用するマテリアルテーブル
+    //Material starMat;             // 星のマテリアル
 
-    IEnumerator routine;        // 星のサイズコルーチンの管理
-    float nextSize = 1.0f;      // 目標の星のサイズ
+    IEnumerator routine;            // 星のサイズコルーチンの管理
+    float nextSize = 1.0f;          // 目標の星のサイズ
 
-    protected Rigidbody starRig;   // 星のRigidbody
+    protected Rigidbody starRig;    // 星のRigidbody
 
     public void Awake()
     {
         // コルーチンの再生、停止をコントロールするためにここで宣言
         routine = SetStarSizeCoroutine(nextSize);
 
-        // starSizeの値が変化したら、transformに適用する
+        // starSizeの値が変化した場合、値をlocalScaleに適用
         starSize.Subscribe(c =>
         {
             transform.localScale = new Vector3(starSize.Value, starSize.Value, starSize.Value);
         })
         .AddTo(gameObject);
 
-        // 初期設定
-        // InitMaterial();
-        
         // Rigidbodyを取得して、Y軸の移動を停止させる
         starRig = GetComponent<Rigidbody>();
         starRig.constraints = RigidbodyConstraints.FreezePositionY;
+
+        // 初期設定
+        // InitMaterial();
     }
 
     // 星のサイズ設定
-    // float size … 変化量　例えばほかの星を吸収した場合は、その星の半径を渡す
+    public float GetSterSize()
+    {
+        return starSize.Value;
+    }
+    // float size … 目標サイズ
     public void SetStarSize(float size)
     {
         // コルーチンがうまく止められないのでいったんNULLにしてから設定しなおす、という…
-        nextSize = starSize.Value + size;
-
         StopCoroutine(routine);
         routine = null;
-        routine = SetStarSizeCoroutine(nextSize);
+        routine = SetStarSizeCoroutine(size);
         StartCoroutine(routine);
     }
-    // 星のサイズを変化させるコルーチン (大きくするとき用です)
-    // size … 目指す星のサイズ
+    // 星のサイズを変化させるコルーチン
+    // size … 目標サイズ
     IEnumerator SetStarSizeCoroutine(float size)
     {
-        // 変化開始時の大きさが、目指す大きさくらいになるまで継続
-        while(size >= starSize.Value)
+        if(size >= starSize.Value)
         {
-            starSize.Value = Mathf.Lerp(starSize.Value, size, 0.05f);
+            // 目標サイズが現在よりも大きければ
+            while (size >= starSize.Value)
+            {
+                starSize.Value = Mathf.Lerp(starSize.Value, size, 0.05f);
 
-            yield return null;
+                yield return null;
+            }
         }
+        else if (size <= starSize.Value)
+        {
+            // 目標サイズが現在よりも小さければ
+            while (size <= starSize.Value)
+            {
+                starSize.Value = Mathf.Lerp(starSize.Value, size, 0.1f);
+
+                yield return null;
+            }
+
+        }
+        
         starSize.Value = size;
     }
 
