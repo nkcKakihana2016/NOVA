@@ -44,7 +44,7 @@ public class _StarParam : MonoBehaviour
     }
 
     // 星のサイズ設定
-    public float GetSterSize()
+    public float GetStarSize()
     {
         return starSize.Value;
     }

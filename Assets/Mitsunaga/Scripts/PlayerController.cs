@@ -122,66 +122,82 @@ public class PlayerController : _StarParam
 
             });
 
-        Observable.Interval(TimeSpan.FromSeconds(1.0)).Subscribe(c =>
-        {
-            SetCamera();
-        })
-        .AddTo(this.gameObject);
+        Observable.Interval(TimeSpan.FromSeconds(1.0))
+            .Subscribe(c =>
+            {
+                SetCamera();
+            }).AddTo(this.gameObject);
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
             .Subscribe(c =>
             {
-                collisionAudioSource.Play();    // 衝突の音を出す
+                float enemySize = -1.0f;
 
-                // 当たった星のサイズが
-                if(c.transform.localScale.x <= (GetSterSize() / 4))
+                try
                 {
-                    // 1. 自分よりも圧倒的に小さければそのまま吸収
+                    enemySize = c.gameObject.GetComponent<_StarParam>().GetStarSize();
 
-                    // ボスを倒すとゲームクリア
-                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                    collisionAudioSource.Play();    // 衝突の音を出す
+
+                    // 当たった星のサイズが
+                    if (enemySize <= (GetStarSize() / 4))
                     {
-                        GameManager.Instance.isClear.Value = true;
+                        // 1. 自分よりも圧倒的に小さければそのまま吸収
+
+                        // ボスを倒すとゲームクリア
+                        if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                        {
+                            GameManager.Instance.isClear.Value = true;
+                        }
+                        else
+                        {
+                            // 小さい星では成長しない
+                            c.gameObject.SetActive(false);
+                        }
                     }
-                    else
+                    else if (c.transform.localScale.x <= (GetStarSize() * 1.1f))
                     {
-                        // 小さい星では成長しない
+                        // 2. 自分と同じくらいならばお互いを破壊して合体
+
+                        // パーティクル再生
+                        foreach (ParticleSystem ps in hitPS)
+                        {
+                            ps.Play();
+                        }
+
+                        // ボスを倒すとゲームクリア
+                        if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                        {
+                            GameManager.Instance.isClear.Value = true;
+                        }
+                        else
+                        {
+                            // ぶつかったら、砕けて待ち時間のカウントを進める
+                            StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
+                        }
+
+                        // 相手のオブジェクトを非表示にする
                         c.gameObject.SetActive(false);
                     }
-                }
-                else if (c.transform.localScale.x <= (transform.localScale.x * 1.1f))
-                {
-                    // 2. 自分と同じくらいならばお互いを破壊して合体
-
-                    // パーティクル再生
-                    foreach (ParticleSystem ps in hitPS)
-                    {
-                        ps.Play();
-                    }
-
-                    // ボスを倒すとゲームクリア
-                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
-                    {
-                        GameManager.Instance.isClear.Value = true;
-                    }
                     else
                     {
-                        // ぶつかったら、砕けて待ち時間のカウントを進める
-                        StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
+                        // 3. 自分より大きければ自分が破壊される　ゲームオーバー
+
+                        GameManager.Instance.isGameOver.Value = true;
+                        this.gameObject.SetActive(false);
                     }
-
-                    // 相手のオブジェクトを非表示にする
-                    c.gameObject.SetActive(false);
                 }
-                else
+                catch
                 {
-                    // 3. 自分より大きければ自分が破壊される　ゲームオーバー
-
-                    GameManager.Instance.isGameOver.Value = true;
-                    this.gameObject.SetActive(false);
+                    Debug.Log("_StarParam is Null");
                 }
-            });
+
+                if(enemySize != -1.0f)
+                {
+
+                }
+            }).AddTo(this.gameObject);
     }
 
     // マウスカーソル・移動処理
