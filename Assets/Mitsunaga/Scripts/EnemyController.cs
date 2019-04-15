@@ -12,8 +12,8 @@ public class EnemyController : _StarParam
     // パラメータ
     [SerializeField] PlanetSpawner spawner; // 惑星が持つスクリプト 30秒経つと消える
 
-    [SerializeField, Header("衝突時のパーティクルのプレハブ")]
-    ParticleSystem enemyPS;
+    [SerializeField, Header("衝突時に生成されるパーティクル")]
+    GameObject enemyPS;
 
     public int AInum;      // AIの番号
 
@@ -26,7 +26,7 @@ public class EnemyController : _StarParam
 
     bool isLookPlayer = false;                                  // プレイヤーを追従するか否か
 
-    // マウスカーソル
+    // マウスカーソルに対する加速関連
     float cursorSpeed = 20.0f;
     float cursorSpeedMul = 1.0f;
     float cursorSpace = 30.0f;
@@ -42,10 +42,9 @@ public class EnemyController : _StarParam
         // 星をアクティブにする
         this.gameObject.SetActive(true);
 
-        // 移動速度をランダムに取得する
+        // 移動速度、AIナンバーをランダムに取得する
         moveSpeed = UnityEngine.Random.Range(3.0f, 10.0f);
-        // AIナンバーをランダムに取得する
-        AInum = UnityEngine.Random.Range(0, 3);
+        AInum     = UnityEngine.Random.Range(0, 3);
 
         // 簡単なAIの挙動(プレイヤーの方向を向くか、ランダムな方向を向くか)
         switch (AInum)
@@ -108,16 +107,31 @@ public class EnemyController : _StarParam
         this.OnCollisionEnterAsObservable()
             .Subscribe(c =>
             {
-                if(c.gameObject.GetComponent<_StarParam>().starID == 3 &&
-                    transform.localScale.x < c.transform.localScale.x)
-                {
-                    // Destroy(this.gameObject);
-                }
-
-                ParticleSystem ps = Instantiate(enemyPS);
+                // 衝突パーティクルを生成
+                GameObject ps = Instantiate(enemyPS);
                 ps.transform.position = this.transform.position;
 
+                // 自分よりも大きい星にぶつかった場合、消滅する
+                if (c.gameObject.GetComponent<_StarParam>().starID != 1 &&
+                transform.localScale.x < c.transform.localScale.x / 4)
+                {
+                    SetStarSize(0.0f);
+                    this.gameObject.SetActive(false);
+                }
             }).AddTo(this.gameObject);
+    }
+    // 消滅までのカウントダウン用のコルーチン
+    // waitCount … 待ち時間(単位：秒)
+    IEnumerator DestroyCoroutine(float waitCount)
+    {
+        // 指定時間待った後、オブジェクトを非表示にする
+        float count = 0.0f;
+        while(count < waitCount)
+        {
+            count += Time.deltaTime;
+            yield return null;
+        }
+        this.gameObject.SetActive(false);
     }
 
     // 惑星スポーンの座標設定

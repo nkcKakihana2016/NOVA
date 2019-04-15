@@ -124,7 +124,6 @@ MonoBehaviour:
   starID: 3
   starSize:
     value: 0
-  matTable: {fileID: 11400000, guid: 6fea5bbb56b0ac74ba89b3800b42001f, type: 2}
   spawner: {fileID: 0}
-  enemyPS: {fileID: 7970975209574642911, guid: c8db0ae0e04693d41a9dcc92f7684285, type: 3}
+  enemyPS: {fileID: 8108907209936491094, guid: c8db0ae0e04693d41a9dcc92f7684285, type: 3}
   AInum: 0

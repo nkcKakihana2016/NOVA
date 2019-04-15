@@ -55,6 +55,7 @@ public class PlayerController : _StarParam
         GameManager.Instance.playerTransform = this.gameObject.transform;
         collisionAudioSource = GetComponent<AudioSource>();
 
+        // 最初はブラックホール
         holeFlg = true;
         holes[1].SetActive(false);
         holes[0].SetActive(true);
@@ -71,11 +72,11 @@ public class PlayerController : _StarParam
 
         // クリックでポーズを解除する
         this.UpdateAsObservable()
-            .Where(c => GameManager.Instance.isPause.Value)
-            .Where(c => !GameManager.Instance.isGameOver.Value)
-            .Where(c => !GameManager.Instance.isClear.Value)
-            .Where(c => Input.GetMouseButtonDown(0))
-            .Subscribe(_ =>
+            .Where(c => Input.GetMouseButtonDown(0))            // マウスがクリックされた場合
+            .Where(c => GameManager.Instance.isPause.Value)     // ポーズ中        である
+            .Where(c => !GameManager.Instance.isGameOver.Value) // ゲームオーバー　ではない
+            .Where(c => !GameManager.Instance.isClear.Value)    // ゲームクリア    ではない
+            .Subscribe(_ =>                                     // 場合のみ処理を実行
             {
                 GameManager.Instance.isPause.Value = false;
             })
@@ -83,10 +84,10 @@ public class PlayerController : _StarParam
 
         // 毎フレーム呼び出される
         this.UpdateAsObservable()
-            .Where(c => !GameManager.Instance.isPause.Value)
-            .Subscribe(_ => 
+            .Where(c => !GameManager.Instance.isPause.Value)    // ポーズ中ではない
+            .Subscribe(_ =>                                     // 場合のみ処理を実行
             {
-            // プレイヤー情報
+            // プレイヤー情報をGameManagerに入力
                 GameManager.Instance.playerTransform = this.gameObject.transform;
 
             // マウスのクリック処理
@@ -95,6 +96,7 @@ public class PlayerController : _StarParam
                     // 移動速度を反転させる
                     moveSpeed = -moveSpeed;
 
+                    // マウスカーソルの表示切替
                     if (holeFlg)
                     {
                         holeFlg = !holeFlg;
@@ -120,69 +122,82 @@ public class PlayerController : _StarParam
 
             });
 
-        Observable.Interval(TimeSpan.FromSeconds(1.0)).Subscribe(c =>
-        {
-            SetCamera();
-        })
-        .AddTo(this.gameObject);
+        Observable.Interval(TimeSpan.FromSeconds(1.0))
+            .Subscribe(c =>
+            {
+                SetCamera();
+            }).AddTo(this.gameObject);
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
-            .Where(c => c.gameObject.GetComponent<_StarParam>().starID != 1)
             .Subscribe(c =>
             {
-                collisionAudioSource.Play();    // 衝突の音を出す
+                float enemySize = -1.0f;
 
-                // 当たった星のサイズが
-                if(c.transform.localScale.x <= (transform.localScale.x / 3))
+                try
                 {
-                    // 1. 自分よりも圧倒的に小さければそのまま吸収
+                    enemySize = c.gameObject.GetComponent<_StarParam>().GetStarSize();
 
-                    // ボスを倒すとクリア
-                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                    collisionAudioSource.Play();    // 衝突の音を出す
+
+                    // 当たった星のサイズが
+                    if (enemySize <= (GetStarSize() / 4))
                     {
-                        GameManager.Instance.isClear.Value = true;
+                        // 1. 自分よりも圧倒的に小さければそのまま吸収
+
+                        // ボスを倒すとゲームクリア
+                        if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                        {
+                            GameManager.Instance.isClear.Value = true;
+                        }
+                        else
+                        {
+                            // 小さい星では成長しない
+                            c.gameObject.SetActive(false);
+                        }
                     }
-                    else
+                    else if (c.transform.localScale.x <= (GetStarSize() * 1.1f))
                     {
-                        // 小さい星は成長速度が遅め
-                        SetStarSize(c.transform.localScale.x / 4);
-                        SetCamera();
+                        // 2. 自分と同じくらいならばお互いを破壊して合体
+
+                        // パーティクル再生
+                        foreach (ParticleSystem ps in hitPS)
+                        {
+                            ps.Play();
+                        }
+
+                        // ボスを倒すとゲームクリア
+                        if (c.gameObject.GetComponent<_StarParam>().starID == 2)
+                        {
+                            GameManager.Instance.isClear.Value = true;
+                        }
+                        else
+                        {
+                            // ぶつかったら、砕けて待ち時間のカウントを進める
+                            StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
+                        }
+
+                        // 相手のオブジェクトを非表示にする
                         c.gameObject.SetActive(false);
                     }
-                }
-                else if (c.transform.localScale.x <= (transform.localScale.x * 1.1f))
-                {
-                    // 2. 自分と同じくらいならばお互いを破壊して合体
-
-                    // パーティクル再生
-                    foreach (ParticleSystem ps in hitPS)
-                    {
-                        ps.Play();
-                    }
-
-                    // ボスを倒すとクリア
-                    if (c.gameObject.GetComponent<_StarParam>().starID == 2)
-                    {
-                        GameManager.Instance.isClear.Value = true;
-                    }
                     else
                     {
-                        // ぶつかったら、砕けて待ち時間のカウントを進める
-                        StartCoroutine(WaitCoroutine(waitCount, c.transform.localScale.x / 2));
+                        // 3. 自分より大きければ自分が破壊される　ゲームオーバー
+
+                        GameManager.Instance.isGameOver.Value = true;
+                        this.gameObject.SetActive(false);
                     }
-
-                    // 相手のオブジェクトを非表示にする
-                    c.gameObject.SetActive(false);
                 }
-                else
+                catch
                 {
-                    // 3. 自分より大きければ自分が破壊される　ゲームオーバー
-
-                    GameManager.Instance.isGameOver.Value = true;
-                    this.gameObject.SetActive(false);
+                    Debug.Log("_StarParam is Null");
                 }
-            });
+
+                if(enemySize != -1.0f)
+                {
+
+                }
+            }).AddTo(this.gameObject);
     }
 
     // マウスカーソル・移動処理
@@ -210,60 +225,56 @@ public class PlayerController : _StarParam
             = CDISTANCE + (transform.localScale.x / 1.5f);
     }
 
-    // 衝突後の待ち時間を管理するコルーチン
-    // 待機時間が終わるまでRigidbody.isLinematicをtrueにすることで動きを止める
-    // observer  : 値を返すもの(ググってくれ)
-    // waitCount : 待ち時間(単位：秒)
-    // nextSize  : 待ち時間が終わった後に大きくする星のサイズ
+    // 衝突後の待ち時間、星の再構成を管理するコルーチン
+    // waitCount：待ち時間(単位：秒)
+    // nextSize ：待ち時間が終わった後に大きくする星のサイズ
     IEnumerator WaitCoroutine(float waitCount,float nextSize)
     {
         
         float count = 0.0f;                     // 待ち時間を計測する変数
         float size = transform.localScale.x;    // プレイヤーのサイズを保存する
 
-        // ヒットストップを最初に起動する
+        // ヒットストップを最初に起動
         StartCoroutine(HitStopCoroutine(hitStopTime));
 
-        // プレイヤーを停止、星のサイズを0に
-        starRig.isKinematic = true;
-        SetStarSize(-size);
+        starRig.isKinematic = true; // プレイヤーを移動不能に
+        SetStarSize(0.0f);          // 星のサイズを0に
 
+        // 待ち時間のカウント
         while (count < waitCount - 0.5f)
         {
             count += Time.deltaTime;
-
             yield return null;
         }
 
-        // 待ち時間が終わる0.5秒前に、星のサイズを適用する
+        // 待ち時間が終わる0.5秒前に、星のサイズを適用
         SetStarSize(size + nextSize);
 
+        // 待ち時間のカウント
         while (count < waitCount)
         {
-            // 待ち時間のカウントを進め、デバッグ用の値を渡す
             count += Time.deltaTime;
-
             yield return null;
         }
 
-        // プレイヤーの停止を終了、カメラをセットする
-        starRig.isKinematic = false;
-        SetCamera();
+        starRig.isKinematic = false;    // プレイヤーを移動可能に
+        SetCamera();                    // カメラをセットする
     }
 
     // 衝突時のヒットストップを管理するコルーチン
-    // コライダーの判定を取ったときに、一瞬スローになる演出
-    // stopFrame
+    // stopTime：待ち時間(単位：秒)
     IEnumerator HitStopCoroutine(float stopTime)
     {
         float count = 0.0f;
 
-        Time.timeScale = 0.03f;
+        // Time.TimeScale … 時間の進む速さを変更する(通常 1.0f)
+        Time.timeScale = 0.05f;
 
+        // 待ち時間のカウント
         while (count < stopTime)
         {
+            // Time.unscaledDeltaTime … タイムスケールの影響を受けないDeltaTime
             count += Time.unscaledDeltaTime;
-
             yield return null;
         }
 
