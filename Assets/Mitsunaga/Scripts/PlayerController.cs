@@ -34,7 +34,15 @@ public class PlayerController : _StarParam
     [SerializeField]
     float waitCount = 4.5f;
     [SerializeField]
-    ParticleSystem[] hitPS;
+    GameObject[] hitPS;
+
+    /*
+    // 大気圏(バリア)関連
+    [SerializeField]
+    GameObject VFXAura;
+    [SerializeField]
+    float atmosphereRange;
+    */
 
     // カメラ関連
     [SerializeField, Header("シネマシーンのカメラ")]
@@ -90,31 +98,27 @@ public class PlayerController : _StarParam
             // プレイヤー情報をGameManagerに入力
                 GameManager.Instance.playerTransform = this.gameObject.transform;
 
-            // マウスのクリック処理
-                if (Input.GetMouseButtonDown(0))
+            // マウス処理
+                if (Input.GetMouseButton(0))
                 {
-                    // 移動速度を反転させる
-                    moveSpeed = -moveSpeed;
+                    // マウス左クリック時はホワイトホール
+                    holeFlg = false;
 
-                    // マウスカーソルの表示切替
-                    if (holeFlg)
-                    {
-                        holeFlg = !holeFlg;
+                    holes[0].SetActive(false);
+                    holes[1].SetActive(true);
 
-                        holes[0].SetActive(false);
-                        holes[1].SetActive(true);
-                    }
-                    else
-                    {
-                        holeFlg = !holeFlg;
-
-                        holes[1].SetActive(false);
-                        holes[0].SetActive(true);
-                    }
+                    MoveCursor(-moveSpeed);
                 }
+                else
+                {
+                    // 非クリック時はブラックホール
+                    holeFlg = true;
 
-            // マウスカーソル・移動処理
-                MoveCursor();
+                    holes[1].SetActive(false);
+                    holes[0].SetActive(true);
+
+                    MoveCursor(moveSpeed);
+                }
 
             // ボスとの間に線を引く
                 linePtB.SetPosition(0, transform.position);     // 開始点の座標
@@ -122,11 +126,13 @@ public class PlayerController : _StarParam
 
             });
 
+        /*
         Observable.Interval(TimeSpan.FromSeconds(1.0))
             .Subscribe(c =>
             {
                 SetCamera();
             }).AddTo(this.gameObject);
+        */
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
@@ -156,14 +162,14 @@ public class PlayerController : _StarParam
                             c.gameObject.SetActive(false);
                         }
                     }
-                    else if (c.transform.localScale.x <= (GetStarSize() * 1.1f))
+                    else if (enemySize <= (GetStarSize() * 1.1f))
                     {
                         // 2. 自分と同じくらいならばお互いを破壊して合体
 
                         // パーティクル再生
-                        foreach (ParticleSystem ps in hitPS)
+                        foreach (GameObject ps in hitPS)
                         {
-                            ps.Play();
+                            Instantiate(ps).transform.position = transform.position;
                         }
 
                         // ボスを倒すとゲームクリア
@@ -201,7 +207,7 @@ public class PlayerController : _StarParam
     }
 
     // マウスカーソル・移動処理
-    void MoveCursor()
+    void MoveCursor(float speed)
     {
         // マウスカーソルの座標を取得
         Vector3 mouseScreen = Input.mousePosition;
@@ -215,7 +221,7 @@ public class PlayerController : _StarParam
 
         // 力を加える
         Vector3 moveDir = (cursorPos - transform.position).normalized;   // マウスカーソルへの方向を取得
-        starRig.AddForce(moveSpeedMul * ((moveDir * moveSpeed) - starRig.velocity));
+        starRig.AddForce(moveSpeedMul * ((moveDir * speed) - starRig.velocity));
     }
     // カメラの処理
     void SetCamera()
