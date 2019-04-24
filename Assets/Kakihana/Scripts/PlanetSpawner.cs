@@ -6,9 +6,12 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using TMPro;
 
 using Random = UnityEngine.Random; // ランダム関数はUnityEngineの物を使う
 
+// 二次元配列のリストをインスペクター上で表示するためのクラス
 [System.SerializableAttribute]
 public class LevelSpawnPlanets
 {
@@ -46,6 +49,8 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private PlanetPool planetPool;             // 惑星のオブジェクトプール
     [SerializeField] private Transform hierarchyTrans;          // スポーンしたオブジェクトをまとめるために必要
     [SerializeField] private float[] planetScales;            // 惑星の大きさの格納できる配列
+    [SerializeField] private float[] planetScaleMax;
+    [SerializeField] private float[] planetScaleMin;
 
     [Header("自動稼働し、設定する必要がないもの")]
     [SerializeField] private int count;                         // 現在のスポーン数
@@ -59,7 +64,7 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     [SerializeField] private Transform playerPos;
     [SerializeField] private Vector3 debugPlayerPos;
     public float debugTime;                                     // デバッグ用時間経過をカウントする
-    
+    [SerializeField] private TextMeshProUGUI debugLevelText;
     
     // Start is called before the first frame update
     void Start()
@@ -70,6 +75,8 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         bossRadius = bossObjTrans.localScale.x * Mathf.PI;
         // 初期化メソッド
         PlanetInit();
+
+        debugLevelText.text = string.Format("Level:{0}",level);
 
         // ボス周辺エリアの半径を2乗する
         maxR = Mathf.Pow(hotSpotRadiusMax, 2);
@@ -127,9 +134,10 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
         var planet = planetPool.Rent();
         count++;
         // 惑星生成  planetScales[Random.Range(0,planetScales.Length)]
-        planet.PlanetSpawn(
-            spawnPos, 
-            planetScaleList[level - 1].planetScales[Random.Range(0, planetScaleList[level - 1].planetScales.Count())]);
+        //planet.PlanetSpawn(
+        //    spawnPos, 
+        //    planetScaleList[level - 1].planetScales[Random.Range(0, planetScaleList[level - 1].planetScales.Count())]);
+        planet.PlanetSpawn(spawnPos, playerPos.localScale.x * Random.Range(planetScaleMin[level-1], planetScaleMax[level-1]));
         // 消滅時、オブジェクトをプールに返す
         planet.OnDisableAsObservable().Subscribe(_ =>
         {
@@ -182,8 +190,9 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
                 // 惑星スポーン、数をカウント
                 count++;
                 planet.PlanetSpawn(
-                spawnPos + bossObjTrans.position,
-                planetScaleList[level - 1].planetScales[Random.Range(0, planetScaleList[level - 1].planetScales.Count())]);
+                spawnPos + bossObjTrans.position, 
+                playerPos.localScale.x * Random.Range(planetScaleMin[level-1], planetScaleMax[level-1]));
+                //planetScaleList[level - 1].planetScales[Random.Range(0, planetScaleList[level - 1].planetScales.Count())]);
                 Debug.Log(spawnPos + bossObjTrans.position);
                 
                 // 消滅時、オブジェクトをプールに返す
@@ -230,6 +239,12 @@ public class PlanetSpawner : PlanetSingleton<PlanetSpawner>
     {
         Gizmos.color = new Color(1.0f, 0.0f, 0.0f, 0.5f);
         Gizmos.DrawSphere(bossObjTrans.position, bossRadius);
+    }
+
+    public void LevelUp()
+    {
+        level++;
+        debugLevelText.text = string.Format("Level:{0}", level);
     }
 }
 

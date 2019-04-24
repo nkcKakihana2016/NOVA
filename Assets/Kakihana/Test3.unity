@@ -1237,10 +1237,18 @@ MonoBehaviour:
   - 3
   - 4
   - 5
-  - 8
-  - 10
-  - 12
-  - 16
+  planetScaleMax:
+  - 1.2
+  - 1.4
+  - 1.8
+  - 2
+  - 3
+  planetScaleMin:
+  - 0.4
+  - 0.5
+  - 0.6
+  - 0.7
+  - 0.8
   count: 0
   planetObjNum: 0
   planetObjRadius: []
