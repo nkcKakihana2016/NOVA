@@ -79,7 +79,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - Vector1_625C3656: 1
-    - Vector1_8C27CD49: 3.46
+    - Vector1_8C27CD49: 5.98
     - Vector1_CCC44A0: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -88,6 +88,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _MaskRange: 0.5
     - _Metallic: 0.53
     - _Mode: 3
     - _OcclusionStrength: 1
@@ -102,7 +103,7 @@ Material:
     - _TimeSpeed: 1.09
     - _UVSec: 0
     - _VLPower: 1
-    - _VPower: 0.2
+    - _VPower: 0
     - _VStop: 1
     - _ZWrite: 0
     m_Colors:
@@ -113,5 +114,5 @@ Material:
     - _MainColor: {r: 1.796078, g: 0.6582485, b: 1.5588319, a: 0}
     - _RimColor: {r: 1, g: 0.43867922, b: 0.7490567, a: 1}
     - _SubColor: {r: 0.7756477, g: 0.6953435, b: 1.9144523, a: 0}
-    - _VLColor: {r: 0, g: 0, b: 0, a: 0}
+    - _VLColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}
     - _VertexLightColor: {r: 0.5990566, g: 0.6305031, b: 1, a: 0}
