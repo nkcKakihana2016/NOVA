@@ -78,8 +78,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_625C3656: 1
-    - Vector1_8C27CD49: 2.74
+    - Vector1_625C3656: 0
+    - Vector1_8C27CD49: 1
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -98,10 +98,10 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _Threshold: 0.7
-    - _TimeScale: 0.1
+    - _TimeScale: 0.44
     - _UVSec: 0
-    - _VLPower: 0.6
-    - _VPower: 0.1
+    - _VLPower: 0
+    - _VPower: 5
     - _VStop: 1
     - _ZWrite: 0
     m_Colors:

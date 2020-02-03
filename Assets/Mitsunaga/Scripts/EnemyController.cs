@@ -100,8 +100,8 @@ public class EnemyController : _StarParam
                         (GameManager.Instance.cursorFlg) ? cursorSpeed : -cursorSpeed
                         )) - starRig.velocity));
                 }
-
-            }).AddTo(this.gameObject);
+            })
+            .AddTo(this.gameObject);
 
         // 当たり判定
         this.OnCollisionEnterAsObservable()
@@ -118,7 +118,8 @@ public class EnemyController : _StarParam
                     SetStarSize(0.0f);
                     this.gameObject.SetActive(false);
                 }
-            }).AddTo(this.gameObject);
+            })
+            .AddTo(this.gameObject);
     }
     // 消滅までのカウントダウン用のコルーチン
     // waitCount … 待ち時間(単位：秒)

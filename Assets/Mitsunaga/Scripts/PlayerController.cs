@@ -53,7 +53,7 @@ public class PlayerController : _StarParam
     AudioSource collisionAudioSource;
 
     // 定数　このへんもっと分かりやすい変数名教えてくれ…
-    const float MOVEDISTANCE = 20.0f;   // マウスの反応する距離　これ+星の直径
+    //const float MOVEDISTANCE = 20.0f;   // マウスの反応する距離　これ+星の直径
 
     new void Awake()
     {
